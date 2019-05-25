@@ -6,7 +6,7 @@ def test_holdouts_generator():
     generator = holdouts_generator(*dataset, test_sizes=[0.3], holdouts=[3])
     list(generator())
     list(generator())
-    generator = holdouts_generator(*dataset, test_sizes=[0.3], holdouts=[3], cache=True)
+    generator = holdouts_generator(*dataset, test_sizes=[0.3, 0.2], holdouts=[3, 1], cache=True)
     list(generator())
     list(generator())
     clear_holdouts_cache()
