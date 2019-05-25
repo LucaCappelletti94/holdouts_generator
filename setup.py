@@ -27,7 +27,7 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-__version__ = find_version("environments_utils", "__version__.py")
+__version__ = find_version("holdouts_generator", "__version__.py")
 
 test_deps = ['pytest', 'pytest-cov', 'coveralls', 'validate_version_code']
 
@@ -36,18 +36,18 @@ extras = {
 }
 
 setup(
-    name='environments_utils',
+    name='holdouts_generator',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
     version=__version__,
 
-    description='Utilities to identify which environments is your python script running within.',
+    description='Simple python package to generate and cache holdouts with arbitrary depth.',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/LucaCappelletti94/environments_utils',
+    url='https://github.com/LucaCappelletti94/holdouts_generator',
 
     # Author details
     author='Luca Cappelletti',
@@ -80,5 +80,6 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     tests_require=test_deps,
+    install_requires=["sklearn", "auto_tqdm"],
     extras_require=extras,
 )
