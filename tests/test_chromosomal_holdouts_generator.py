@@ -8,16 +8,23 @@ def test_chromosomal_holdouts_generator():
         holdouts=chromosomal_holdouts([
             (
                 [19],
-                [([12],[([7], None)]), ([11],[([7], None)])]
+                [
+                    ([12],None),
+                    ([11],None)
+                ]
             ),
             (
                 [2],
-                [([12],[([7], None)]), ([11],[([7], None)])]
+                [
+                    ([12],None),
+                    ([11],None)
+                ]
             )
         ])
     )
-    list(generator())
-    list(generator())
+    for _, s1 in generator():
+        for _ in s1():
+            pass
     generator = holdouts_generator(
         x, x, x, 
         holdouts=chromosomal_holdouts([
