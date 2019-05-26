@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: holdouts-generator
-Version: 0.0.1
+Version: 0.0.3
 Summary: Simple python package to generate and cache holdouts with arbitrary depth.
 Home-page: https://github.com/LucaCappelletti94/holdouts_generator
 Author: Luca Cappelletti
@@ -37,7 +37,11 @@ Description: Holdouts generator
                 cache=False, # Set this parameter to True to enable automatic caching
                 cache_dir=".holdouts_cache" # This is the default cache directory
             )
-        
+            
+            for (training, testing), inner_holdouts in generator():
+                for (inner_train, inner_test), small_holdouts in inner_holdouts():
+                    for (small_train, small_test), _ in small_holdouts():
+                        #do what you need :)
         
         Generating chromosomal holdouts
         ---------------------------------
@@ -56,6 +60,10 @@ Description: Holdouts generator
                 cache=False, # Set this parameter to True to enable automatic caching
                 cache_dir=".holdouts_cache" # This is the default cache directory
             )
+        
+            for (training, testing), inner_holdouts in generator():
+                for (inner_train, inner_test), _ in inner_holdouts():
+                    #do what you need :)
         
         Clearing the holdouts cache
         --------------------------------------

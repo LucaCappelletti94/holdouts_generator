@@ -28,11 +28,12 @@ def holdouts_generator(*dataset, holdouts:List, verbose:bool=True, cache:bool=Fa
     def generator():
         for outer_holdout, name, inner_holdouts in tqdm(holdouts, verbose=verbose):
             validation = load_cache(dataset, outer_holdout, name, cache_dir) if cache else outer_holdout(dataset)
+            training, testing = validation[::2], validation[1::2]
             if inner_holdouts is None:
-                yield validation, None
+                yield (training, testing), None
             else:
-                yield validation, holdouts_generator(
-                    *[v for i, v in enumerate(validation) if i%2==0],
+                yield (training, testing), holdouts_generator(
+                    *training,
                     holdouts=inner_holdouts,
                     verbose=verbose,
                     cache=cache,

@@ -29,7 +29,11 @@ Suppose you want to generate 3 layers of holdouts, respectively with 0.3, 0.2 an
         cache=False, # Set this parameter to True to enable automatic caching
         cache_dir=".holdouts_cache" # This is the default cache directory
     )
-
+    
+    for (training, testing), inner_holdouts in generator():
+        for (inner_train, inner_test), small_holdouts in inner_holdouts():
+            for (small_train, small_test), _ in small_holdouts():
+                #do what you need :)
 
 Generating chromosomal holdouts
 ---------------------------------
@@ -48,6 +52,10 @@ Suppose you want to generate 2 layers of holdouts, two outer ones with chromosom
         cache=False, # Set this parameter to True to enable automatic caching
         cache_dir=".holdouts_cache" # This is the default cache directory
     )
+
+    for (training, testing), inner_holdouts in generator():
+        for (inner_train, inner_test), _ in inner_holdouts():
+            #do what you need :)
 
 Clearing the holdouts cache
 --------------------------------------
