@@ -12,7 +12,7 @@ def chromosomal_holdout(chromosomes:List[int])->Callable:
         test_mask = np.array([i.split(".")[0] in formatted_chromosomes for i in dataset[0].index])
         train_mask = np.bitwise_not(test_mask)
         return [
-            d[train_mask] if i%2 else d[test_mask] for i, d in enumerate(dataset)
+            d[mask] for i, d in enumerate(dataset) for mask in [train_mask, test_mask]
         ]
 
     return holdout, "chromosomal_holdout_{chromosomes}".format(

@@ -2,7 +2,7 @@ from holdouts_generator import holdouts_generator, clear_holdouts_cache, random_
 import numpy as np
 
 def test_test_random_holdouts_generator():
-    dataset = np.random.randint(10, size=(100,10))
+    dataset = np.random.randint(10, size=(2, 100,10))
     generator = holdouts_generator(
         *dataset, 
         holdouts=random_holdouts(

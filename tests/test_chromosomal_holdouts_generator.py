@@ -4,7 +4,7 @@ import pandas as pd
 def test_chromosomal_holdouts_generator():
     x = pd.read_csv("test_dataset/x.csv", index_col=0)
     generator = holdouts_generator(
-        x, x, x, 
+        x, x,
         holdouts=chromosomal_holdouts([
             (
                 [19],
@@ -26,7 +26,7 @@ def test_chromosomal_holdouts_generator():
         for _ in s1():
             pass
     generator = holdouts_generator(
-        x, x, x, 
+        x, x, 
         holdouts=chromosomal_holdouts([
             (
                 [19],
