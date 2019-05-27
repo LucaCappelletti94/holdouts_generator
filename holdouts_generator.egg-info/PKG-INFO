@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: holdouts-generator
-Version: 0.0.5
+Version: 0.0.6
 Summary: Simple python package to generate and cache holdouts with arbitrary depth.
 Home-page: https://github.com/LucaCappelletti94/holdouts_generator
 Author: Luca Cappelletti
@@ -35,7 +35,7 @@ Description: Holdouts generator
                     [5, 3, 2]
                 ),
                 cache=False, # Set this parameter to True to enable automatic caching
-                cache_dir=".holdouts_cache" # This is the default cache directory
+                cache_dir=".holdouts" # This is the default cache directory
             )
             
             for (training, testing), inner_holdouts in generator():
@@ -58,7 +58,7 @@ Description: Holdouts generator
                     ([18], [([17], None), ([20], None), ([21], None)])
                 ]),
                 cache=False, # Set this parameter to True to enable automatic caching
-                cache_dir=".holdouts_cache" # This is the default cache directory
+                cache_dir=".holdouts" # This is the default cache directory
             )
         
             for (training, testing), inner_holdouts in generator():
@@ -74,7 +74,7 @@ Description: Holdouts generator
             from holdouts_generator import clear_holdouts_cache
         
             clear_holdouts_cache(
-                cache_dir=".holdouts_cache" # This is the default cache directory
+                cache_dir=".holdouts" # This is the default cache directory
             )
         
         

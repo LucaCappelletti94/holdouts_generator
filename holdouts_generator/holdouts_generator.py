@@ -17,7 +17,7 @@ def load_cache(dataset, holdout, name, cache_dir:str):
         pickle.dump(data, f)
     return data
 
-def holdouts_generator(*dataset, holdouts:List, verbose:bool=True, cache:bool=False, cache_dir:str=".holdouts_cache"):
+def holdouts_generator(*dataset, holdouts:List, verbose:bool=True, cache:bool=False, cache_dir:str=".holdouts"):
     """Return validation dataset and another holdout generator
         dataset, iterable of datasets to generate holdouts from.
         holdouts:List, list of holdouts callbacks.
@@ -26,7 +26,7 @@ def holdouts_generator(*dataset, holdouts:List, verbose:bool=True, cache:bool=Fa
         cache_dir:str=".cache", directory where to cache the holdouts.
     """
     def generator():
-        for outer_holdout, name, inner_holdouts in tqdm(holdouts, verbose=verbose):
+        for outer_holdout, name, inner_holdouts in tqdm(list(holdouts), verbose=verbose):
             validation = load_cache(dataset, outer_holdout, name, cache_dir) if cache else outer_holdout(dataset)
             training, testing = validation[::2], validation[1::2]
             if inner_holdouts is None:
@@ -45,9 +45,9 @@ def holdouts_generator(*dataset, holdouts:List, verbose:bool=True, cache:bool=Fa
     return generator
 
 
-def clear_holdouts_cache(cache_dir:str=".holdouts_cache"):
+def clear_holdouts_cache(cache_dir:str=".holdouts"):
     """Remove the holdouts cace directory.
-        cache_dir:str=".holdouts_cache", the holdouts cache directory to be removed.
+        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
     """
     if os.path.exists(cache_dir):
         shutil.rmtree(cache_dir)

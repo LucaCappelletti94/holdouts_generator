@@ -27,7 +27,7 @@ Suppose you want to generate 3 layers of holdouts, respectively with 0.3, 0.2 an
             [5, 3, 2]
         ),
         cache=False, # Set this parameter to True to enable automatic caching
-        cache_dir=".holdouts_cache" # This is the default cache directory
+        cache_dir=".holdouts" # This is the default cache directory
     )
     
     for (training, testing), inner_holdouts in generator():
@@ -50,7 +50,7 @@ Suppose you want to generate 2 layers of holdouts, two outer ones with chromosom
             ([18], [([17], None), ([20], None), ([21], None)])
         ]),
         cache=False, # Set this parameter to True to enable automatic caching
-        cache_dir=".holdouts_cache" # This is the default cache directory
+        cache_dir=".holdouts" # This is the default cache directory
     )
 
     for (training, testing), inner_holdouts in generator():
@@ -66,7 +66,7 @@ Just run the method `clear_holdouts_cache`:
     from holdouts_generator import clear_holdouts_cache
 
     clear_holdouts_cache(
-        cache_dir=".holdouts_cache" # This is the default cache directory
+        cache_dir=".holdouts" # This is the default cache directory
     )
 
 
