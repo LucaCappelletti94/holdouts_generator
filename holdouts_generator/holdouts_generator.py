@@ -17,7 +17,16 @@ def load_cache(dataset, holdout, name, cache_dir:str):
         pickle.dump(data, f)
     return data
 
-def holdouts_generator(*dataset, holdouts:List, verbose:bool=True, cache:bool=False, cache_dir:str=".holdouts"):
+def get_desc(level:int):
+    if level==0:
+        return "Holdouts"
+    if level==1:
+        return "Inner holdouts"
+    if level>1:
+        return "Inner holdouts (level {level})".format(level=level)
+
+
+def holdouts_generator(*dataset, holdouts:List, verbose:bool=True, cache:bool=False, cache_dir:str=".holdouts", level:int=0):
     """Return validation dataset and another holdout generator
         dataset, iterable of datasets to generate holdouts from.
         holdouts:List, list of holdouts callbacks.
@@ -26,7 +35,7 @@ def holdouts_generator(*dataset, holdouts:List, verbose:bool=True, cache:bool=Fa
         cache_dir:str=".cache", directory where to cache the holdouts.
     """
     def generator():
-        for outer_holdout, name, inner_holdouts in tqdm(list(holdouts), verbose=verbose):
+        for outer_holdout, name, inner_holdouts in tqdm(list(holdouts), verbose=verbose, desc=get_desc(level)):
             validation = load_cache(dataset, outer_holdout, name, cache_dir) if cache else outer_holdout(dataset)
             training, testing = validation[::2], validation[1::2]
             if inner_holdouts is None:
@@ -40,7 +49,8 @@ def holdouts_generator(*dataset, holdouts:List, verbose:bool=True, cache:bool=Fa
                     cache_dir="{cache_dir}/{name}".format(
                         cache_dir=cache_dir,
                         name=name
-                    )
+                    ),
+                    level=level+1
                 )
     return generator
 
