@@ -1,4 +1,4 @@
-from typing import Callable, Union, List, Tuple
+from typing import Callable, List, Tuple
 from sklearn.model_selection import train_test_split
 
 def random_holdout(test_size:float, random_state:int)->[Callable, str]:
@@ -23,7 +23,6 @@ def random_holdouts(test_sizes:List[float], quantities:List[int], random_state:i
         quantities:List[int], quantities of holdouts for each test_size.
         random_state:int=42, random state to reproduce experiment.
     """
-    assert len(test_sizes) == len(quantities)
     if len(test_sizes)>1:
         return [
             (

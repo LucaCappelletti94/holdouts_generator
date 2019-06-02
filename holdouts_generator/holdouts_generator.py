@@ -2,7 +2,7 @@ import os
 import pickle
 import shutil
 from auto_tqdm import tqdm
-from typing import List, Tuple
+from typing import List
 
 
 def load_cache(dataset, holdout, name, cache_dir:str):
