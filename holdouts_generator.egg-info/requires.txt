@@ -1,9 +1,10 @@
-sklearn
 auto_tqdm
+sklearn
 pandas
 
 [test]
-pytest
+codacy-coverage
 pytest-cov
-coveralls
 validate_version_code
+pytest
+coveralls
