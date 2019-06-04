@@ -7,8 +7,8 @@ def test_test_random_holdouts_generator():
     generator = holdouts_generator(
         *dataset,
         holdouts=random_holdouts(
-            [0.1, 0.2],
-            [2, 3]
+            [0.1, 0.2, 0.1],
+            [2, 3, 1]
         ),
         memory_cache=True
     )
