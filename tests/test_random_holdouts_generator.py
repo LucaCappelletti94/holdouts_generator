@@ -12,7 +12,10 @@ def test_test_random_holdouts_generator():
         ),
         memory_cache=True
     )
-    list(generator())
+    for _, s1 in generator():
+        for _, s2 in s1():
+            for _ in s2():
+                pass
     list(generator())
     generator = holdouts_generator(
         *dataset,
