@@ -1,4 +1,4 @@
-from holdouts_generator import holdouts_generator, clear_cache, chromosomal_holdouts, clear_memory_cache
+from holdouts_generator import holdouts_generator, clear_cache, chromosomal_holdouts
 import pandas as pd
 
 
@@ -38,10 +38,8 @@ def test_chromosomal_holdouts_generator():
                 [([12], [([7], None)]), ([11], [([7], None)])]
             )
         ]),
-        cache=True,
-        memory_cache=True
+        cache=True
     )
     list(generator())
     list(generator())
     clear_cache()
-    clear_memory_cache()

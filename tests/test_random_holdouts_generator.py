@@ -1,4 +1,4 @@
-from holdouts_generator import holdouts_generator, clear_cache, clear_memory_cache, random_holdouts
+from holdouts_generator import holdouts_generator, clear_cache, random_holdouts
 import numpy as np
 
 
@@ -9,8 +9,7 @@ def test_test_random_holdouts_generator():
         holdouts=random_holdouts(
             [0.1, 0.2, 0.1],
             [2, 3, 1]
-        ),
-        memory_cache=True
+        )
     )
     for _, s1 in generator():
         for _, s2 in s1():
@@ -28,4 +27,3 @@ def test_test_random_holdouts_generator():
     list(generator())
     list(generator())
     clear_cache()
-    clear_memory_cache()
