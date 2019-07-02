@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: holdouts-generator
-Version: 0.0.12
+Version: 0.0.13
 Summary: Simple python package to generate and cache both random and chromosomal holdouts with arbitrary depth.
 Home-page: https://github.com/LucaCappelletti94/holdouts_generator
 Author: Luca Cappelletti
@@ -117,12 +117,12 @@ Description: holdouts_generator
             :target: https://coveralls.io/github/LucaCappelletti94/holdouts_generator?branch=master
             :alt: Coveralls Coverage
         
-        .. |pip| image:: https://badge.fury.io/py/holdouts_generator.svg
-            :target: https://badge.fury.io/py/holdouts_generator
+        .. |pip| image:: https://badge.fury.io/py/holdouts-generator.svg
+            :target: https://badge.fury.io/py/holdouts-generator
             :alt: Pypi project
         
-        .. |downloads| image:: https://pepy.tech/badge/holdouts_generator
-            :target: https://pepy.tech/badge/holdouts_generator
+        .. |downloads| image:: https://pepy.tech/badge/holdouts-generator
+            :target: https://pepy.tech/badge/holdouts-generator
             :alt: Pypi total project downloads 
         
         .. |codacy|  image:: https://api.codacy.com/project/badge/Grade/31638d8f26b0487184573515c46af276

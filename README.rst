@@ -109,12 +109,12 @@ Just run the method `clear_memory_cache`:
     :target: https://coveralls.io/github/LucaCappelletti94/holdouts_generator?branch=master
     :alt: Coveralls Coverage
 
-.. |pip| image:: https://badge.fury.io/py/holdouts_generator.svg
-    :target: https://badge.fury.io/py/holdouts_generator
+.. |pip| image:: https://badge.fury.io/py/holdouts-generator.svg
+    :target: https://badge.fury.io/py/holdouts-generator
     :alt: Pypi project
 
-.. |downloads| image:: https://pepy.tech/badge/holdouts_generator
-    :target: https://pepy.tech/badge/holdouts_generator
+.. |downloads| image:: https://pepy.tech/badge/holdouts-generator
+    :target: https://pepy.tech/badge/holdouts-generator
     :alt: Pypi total project downloads 
 
 .. |codacy|  image:: https://api.codacy.com/project/badge/Grade/31638d8f26b0487184573515c46af276
