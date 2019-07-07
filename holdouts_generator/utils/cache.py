@@ -1,4 +1,3 @@
-from decorator import decorator
 from typing import Callable, List
 from .paths import pickle_path, info_path
 from .various import odd_even_split
