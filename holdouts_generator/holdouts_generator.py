@@ -11,11 +11,11 @@ def _holdouts_generator(*dataset: List, holdouts: List, cacher:Callable, cache_d
         return None
 
     def generator():
-        for number, (outer, name, inner) in tqdm(enumerate(list(holdouts)), desc=get_level_description(level)):
-            key = get_holdout_key(cache_dir, level, number)
+        for number, (outer, parameters, inner) in tqdm(enumerate(list(holdouts)), desc=get_level_description(level)):
+            key = get_holdout_key(cache_dir, **parameters, level=level, number=number)
             if skip is not None and key is not None and skip(key):
                 continue
-            data = cacher(outer, dataset, cache_dir, level, number)
+            data = cacher(outer, dataset, cache_dir, **parameters, level=level, number=number)
             yield data, _holdouts_generator(
                 *data[0],
                 holdouts=inner,

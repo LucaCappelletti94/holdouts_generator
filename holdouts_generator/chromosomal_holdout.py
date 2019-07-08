@@ -1,8 +1,8 @@
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, Dict
 import pandas as pd
 import numpy as np
 
-def chromosomal_holdout(chromosomes:List[int])->Callable:
+def chromosomal_holdout(chromosomes:List[int])->Tuple[Callable, str, Dict]:
     """Return a function to create an holdout with given chromosomes."""
     formatted_chromosomes = ["chr{c}".format(c=c) for c in chromosomes]
     def holdout(dataset:List[pd.DataFrame])->List[pd.DataFrame]:
@@ -15,9 +15,9 @@ def chromosomal_holdout(chromosomes:List[int])->Callable:
             d[mask] for i, d in enumerate(dataset) for mask in [train_mask, test_mask]
         ]
 
-    return holdout, "chromosomal_holdout_{chromosomes}".format(
-        chromosomes="+".join(formatted_chromosomes)
-    )
+    return holdout, {
+        "chromosomes":formatted_chromosomes
+    }
 
 def chromosomal_holdouts(chromosomes_lists:List[Tuple[List[int], List[Tuple]]])->List[Tuple[Callable, str, List]]:
     """Return a Generator of functions to create an holdouts with given chromosomes.

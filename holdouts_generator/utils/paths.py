@@ -1,8 +1,9 @@
-def pickle_path(cache_directory: str, level:int, number:int)->str:
-    return "{cache_directory}/{level}-{number}.pickle".format(
+from dict_hash import sha256
+
+def pickle_path(cache_directory: str, **parameters)->str:
+    return "{cache_directory}/{hash}.pickle".format(
         cache_directory=cache_directory,
-        level=level,
-        number=number    
+        hash=sha256(parameters)
     )
 
 def info_path(cache_directory: str)->str:
