@@ -1,6 +1,7 @@
 auto_tqdm
 sklearn
 pandas
+dict_hash
 
 [test]
 codacy-coverage

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: holdouts-generator
-Version: 0.0.13
+Version: 0.0.14
 Summary: Simple python package to generate and cache both random and chromosomal holdouts with arbitrary depth.
 Home-page: https://github.com/LucaCappelletti94/holdouts_generator
 Author: Luca Cappelletti
