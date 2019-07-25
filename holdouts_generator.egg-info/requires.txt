@@ -2,6 +2,7 @@ auto_tqdm
 sklearn
 pandas
 dict_hash
+keras
 
 [test]
 codacy-coverage
