@@ -1,24 +1,26 @@
 from typing import Callable, List, Dict
 from .paths import pickle_path, info_path
-from .various import odd_even_split
+from .various import odd_even_split, build_query
 from .hash import hash_file
 import os
 import pandas as pd
 import pickle
-
+import json
 
 def uncached(generator: Callable, dataset: List, *args, **kwargs):
-    return odd_even_split(generator(dataset))
+    return odd_even_split(generator(dataset)), None
 
 
 def cached(generator: Callable, dataset: List, cache_dir: str, **parameters: Dict):
     path = pickle_path(cache_dir, **parameters)
     try:
-        return load(path)
+        return load(path), pd.read_csv(info_path(cache_dir)).query(
+            build_query({"path":path})
+        )["key"].values[0]
     except (pickle.PickleError, FileNotFoundError):
         data = odd_even_split(generator(dataset))
     key = dump(data, cache_dir, path, **parameters)
-    return (*data, key)
+    return (data, key)
 
 
 def load(path: str):
@@ -47,14 +49,11 @@ def dump(data, cache_dir: str, path: str, **parameters: Dict)->str:
 
 
 def get_holdout_key(cache_dir: str, **parameters: Dict)->str:
-    """Return key, if cached, for given holdout.
+    """Return key, if cached, for given holdout else return None.
         cache_dir:str, cache directory to load data from
         parameters:Dict, parameters used to generated the holdout.
     """
     try:
-        return pd.read_csv(info_path(cache_dir)).query(" & ".join([
-            "{key} == {value}".format(key=key, value=value)
-            for key, value in parameters.items()
-        ]))["key"].values[0]
+        return pd.read_csv(info_path(cache_dir)).query(build_query(parameters))["key"].values[0]
     except (FileNotFoundError, IndexError):
-        pass
+        return None
