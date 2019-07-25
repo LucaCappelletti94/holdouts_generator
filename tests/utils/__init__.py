@@ -2,8 +2,8 @@ from holdouts_generator import random_holdouts, chromosomal_holdouts
 from random import randint
 
 example_random_holdouts = random_holdouts(
-    [0.1, 0.2],
-    [2, 1]
+    [0.1, 0.2, 0.3],
+    [2, 1, 1]
 )
 
 example_chromosomal_holdouts = chromosomal_holdouts([
