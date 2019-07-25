@@ -7,8 +7,7 @@ from typing import List, Callable, Dict
 from .utils import get_level_description, cached, uncached, get_holdout_key
 
 def empty_generator(*args, **kwargs):
-    return
-    yield
+    return []
 
 def _holdouts_generator(*dataset: List, holdouts: List, cacher:Callable, cache_dir:str=None, skip:Callable[[str, Dict, str], bool]=None, level: int = 0):
     """Return validation dataset, its key and another holdout generator.
