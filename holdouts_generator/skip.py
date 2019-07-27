@@ -23,7 +23,8 @@ def skip(key: str, hyper_parameters: Dict, results_directory: str)->bool:
         hyper_parameters: Dict, hyper parameters to check for.
         results_directory: str = "results", directory where to store the results.
     """
-    return not pd.read_csv(results_path(results_directory)).query(build_query(build_keys(key, hyper_parameters))).empty
+    path = results_path(results_directory)
+    return os.path.exists(path) and not pd.read_csv(path).query(build_query(build_keys(key, hyper_parameters))).empty
 
 def store_result(key: str, new_results: Dict, hyper_parameters: Dict, results_directory: str = "results"):
     """Store given results in a standard way, so that the skip function can use them.

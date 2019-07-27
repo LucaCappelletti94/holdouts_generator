@@ -30,6 +30,11 @@ def train(training:Tuple, testing:Tuple):
 def test_keras_cache():
     (x_train, y_train), _ = boston_housing.load_data()
     generator = cached_holdouts_generator(x_train, y_train, holdouts=example_random_holdouts, skip=skip)
+
+    for _, _, inner in generator():
+        for _ in inner():
+            pass
+
     for (training, testing), outer_key, inner in generator():            
         for (inner_training, inner_testing), inner_key, _ in inner():
             if inner_training is not None:
