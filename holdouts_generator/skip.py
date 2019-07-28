@@ -94,7 +94,7 @@ def load_keras_results(key: str, hyper_parameters: Dict=None, results_directory:
         results_directory: str = "results", directory where to store the results.
     """
     row = load_result(key, hyper_parameters, results_directory)
-    model = None if row["model_path"] is None else load_model(row["model_path"])
+    model = None if pd.isna(row["model_path"]) else load_model(row["model_path"])
     return (
         row,
         model,
