@@ -10,3 +10,4 @@ pytest-cov
 validate_version_code
 pytest
 coveralls
+silence_tensorflow
