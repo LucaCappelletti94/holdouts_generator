@@ -49,7 +49,7 @@ def test_keras_cache():
         if training is not None:
             store_keras_result(outer_key, *train(training, testing, hyper_parameters))
     
-    for data, outer_key, inner in generator(hyper_parameters):
+    for _, outer_key, inner in generator(hyper_parameters):
         for _, inner_key, _ in inner(hyper_parameters):
             load_result(inner_key, hyper_parameters)
         load_result(outer_key, hyper_parameters)
