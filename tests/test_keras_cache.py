@@ -19,13 +19,20 @@ def mlp()->Sequential:
 
 def train(training:Tuple, testing:Tuple):
     model = mlp()
+    hyper_parameters = {
+        "epochs":1
+    }
+    parameters = {
+        "shuffle":True
+    }
     history = model.fit(
         *training,
-        epochs=1,
+        **hyper_parameters,
+        **parameters,
         validation_data=testing,
         verbose=0
     ).history
-    return history, testing[0], testing[1], model
+    return history, testing[0], testing[1], model, hyper_parameters, parameters
 
 def test_keras_cache():
     (x_train, y_train), _ = boston_housing.load_data()
