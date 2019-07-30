@@ -1,6 +1,6 @@
 from holdouts_generator import holdouts_generator, clear_cache, random_holdouts, cached_holdouts_generator, skip, store_keras_result, load_result, delete_results
 import numpy as np
-from typing import Tuple
+from typing import Tuple, Dict
 from keras.datasets import boston_housing
 from .utils import example_random_holdouts
 from keras import Sequential
@@ -17,11 +17,8 @@ def mlp()->Sequential:
     )
     return model
 
-def train(training:Tuple, testing:Tuple):
+def train(training:Tuple, testing:Tuple, hyper_parameters:Dict):
     model = mlp()
-    hyper_parameters = {
-        "epochs":1
-    }
     parameters = {
         "shuffle":True
     }
@@ -37,22 +34,25 @@ def train(training:Tuple, testing:Tuple):
 def test_keras_cache():
     (x_train, y_train), _ = boston_housing.load_data()
     generator = cached_holdouts_generator(x_train, y_train, holdouts=example_random_holdouts, skip=skip)
+    hyper_parameters = {
+        "epochs":1
+    }
 
-    for _, _, inner in generator():
-        for _ in inner():
+    for _, _, inner in generator(hyper_parameters):
+        for _ in inner(hyper_parameters):
             pass
 
-    for (training, testing), outer_key, inner in generator():            
-        for (inner_training, inner_testing), inner_key, _ in inner():
+    for (training, testing), outer_key, inner in generator(hyper_parameters):            
+        for (inner_training, inner_testing), inner_key, _ in inner(hyper_parameters):
             if inner_training is not None:
-                store_keras_result(inner_key, *train(inner_training, inner_testing))
+                store_keras_result(inner_key, *train(inner_training, inner_testing, hyper_parameters))
         if training is not None:
-            store_keras_result(outer_key, *train(training, testing))
+            store_keras_result(outer_key, *train(training, testing, hyper_parameters))
     
-    for data, outer_key, inner in generator():
-        for _, inner_key, _ in inner():
-            load_result(inner_key)
-        load_result(outer_key)
+    for data, outer_key, inner in generator(hyper_parameters):
+        for _, inner_key, _ in inner(hyper_parameters):
+            load_result(inner_key, hyper_parameters)
+        load_result(outer_key, hyper_parameters)
 
     clear_cache()
     delete_results()

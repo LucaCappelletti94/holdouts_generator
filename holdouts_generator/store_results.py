@@ -7,9 +7,8 @@ from .utils import results_path, hyper_parameters_path, parameters_path, history
 from .utils import build_keys, build_query
 from keras import Model
 from keras.models import load_model
-import json
 import shutil
-
+from json import dump
 
 def store_result(key: str, new_results: Dict, hyper_parameters: Dict = None, parameters: Dict = None, results_directory: str = "results"):
     """Store given results in a standard way, so that the skip function can use them.
@@ -31,9 +30,11 @@ def store_result(key: str, new_results: Dict, hyper_parameters: Dict = None, par
         "parameters_path": ppath
     }, index=[0])
     if hyper_parameters:
-        pd.DataFrame(hyper_parameters).to_json(hppath)
+        with open(hppath, "w") as f:
+            dump(hyper_parameters, f)
     if parameters:
-        pd.DataFrame(parameters).to_json(ppath)
+        with open(ppath, "w") as f:
+            dump(parameters, f)
     if os.path.exists(rpath):
         results = pd.concat([pd.read_csv(rpath), results])
     results.to_csv(rpath, index=False)
