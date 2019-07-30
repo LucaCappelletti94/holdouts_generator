@@ -1,4 +1,4 @@
-from holdouts_generator import holdouts_generator, clear_cache, random_holdouts, cached_holdouts_generator, skip, store_keras_result, load_keras_results, delete_results
+from holdouts_generator import holdouts_generator, clear_cache, random_holdouts, cached_holdouts_generator, skip, store_keras_result, load_result, delete_results
 import numpy as np
 from typing import Tuple
 from keras.datasets import boston_housing
@@ -25,7 +25,7 @@ def train(training:Tuple, testing:Tuple):
         validation_data=testing,
         verbose=0
     ).history
-    return history, model.predict_proba(testing[0]), testing[1], None, model
+    return history, testing[0], testing[1], model
 
 def test_keras_cache():
     (x_train, y_train), _ = boston_housing.load_data()
@@ -44,8 +44,8 @@ def test_keras_cache():
     
     for data, outer_key, inner in generator():
         for _, inner_key, _ in inner():
-            load_keras_results(inner_key)
-        load_keras_results(outer_key)
+            load_result(inner_key)
+        load_result(outer_key)
 
     clear_cache()
     delete_results()

@@ -30,7 +30,7 @@ def find_version(*file_paths):
 
 __version__ = find_version("holdouts_generator", "__version__.py")
 
-test_deps =["codacy-coverage", "pytest-cov", "validate_version_code", "pytest", "coveralls"]
+test_deps =["codacy-coverage", "pytest-cov", "validate_version_code", "pytest", "coveralls", "silence_tensorflow"]
 
 extras = {
     'test': test_deps,

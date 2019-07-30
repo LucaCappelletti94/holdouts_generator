@@ -35,6 +35,18 @@ def hyper_parameters_path(results_directory: str, hyper_parameters: Dict)->str:
         hyper_parameters_key=sha256(hyper_parameters)
     )
 
+def parameters_path(results_directory: str, parameters: Dict)->str:
+    """Return path where to store metrics tracked during history.
+        results_directory: str, directory where to store the prediction_labels.
+        parameters: Dict, hyper parameters used to create and train the model.
+    """
+    root = "{rd}/parameters".format(rd=results_directory)
+    os.makedirs(root, exist_ok=True)
+    return "{root}/{parameters_key}.json".format(
+        root=root,
+        parameters_key=sha256(parameters)
+    )
+
 def history_path(results_directory: str, history: Dict)->str:
     """Return path where to store metrics tracked during history.
         results_directory: str, directory where to store the prediction_labels.
