@@ -10,6 +10,7 @@ from keras.models import load_model
 import shutil
 from json import dump
 
+
 def store_result(key: str, new_results: Dict, hyper_parameters: Dict = None, parameters: Dict = None, results_directory: str = "results"):
     """Store given results in a standard way, so that the skip function can use them.
         key: str, key identifier of holdout to be skipped.
@@ -74,13 +75,20 @@ def store_keras_result(key: str, history: Dict, x_test: np.ndarray, y_test_true:
         model.save(mpath)
 
 
+def load_results(results_directory: str = "results"):
+    """Load standard results.
+        results_directory: str = "results", directory where results are stored.
+    """
+    return pd.read_csv(results_path(results_directory))
+
+
 def load_result(key: str, hyper_parameters: Dict = None, results_directory: str = "results"):
-    """Load standard results corresponding at given key and 
+    """Load standard results corresponding at given key and hyper_parameters.
         key: str, key identifier of holdout to be skipped.
         hyper_parameters: Dict, hyper parameters to check for.
         results_directory: str = "results", directory where to store the results.
     """
-    return pd.read_csv(results_path(results_directory)).query(
+    return load_results(results_directory).query(
         build_query(build_keys(key, hyper_parameters))
     ).to_dict('records')[0]
 
