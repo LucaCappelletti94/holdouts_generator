@@ -10,7 +10,7 @@ def pickle_path(cache_directory: str, **hyper_parameters: Dict)->str:
     """
     root = "{cd}/holdouts".format(cd=cache_directory)
     os.makedirs(root, exist_ok=True)
-    return "{root}/{hash}.pickle".format(
+    return "{root}/{hash}.pickle.gz".format(
         root=root,
         hash=sha256(hyper_parameters)
     )

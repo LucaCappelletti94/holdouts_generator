@@ -1,12 +1,10 @@
-from typing import Dict, List
-from dict_hash import sha256
+from typing import Dict
 import os
 import pandas as pd
 import numpy as np
 from .utils import results_path, hyper_parameters_path, parameters_path, history_path, trained_model_path, true_labels_path, predictions_labels_path
 from .utils import build_keys, build_query
 from keras import Model
-from keras.models import load_model
 import shutil
 from json import dump
 

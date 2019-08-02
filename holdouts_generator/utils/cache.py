@@ -5,7 +5,8 @@ from .hash import hash_file
 import os
 import pandas as pd
 import pickle
-import json
+import compress_pickle
+
 
 def uncached(generator: Callable, dataset: List, *args, **kwargs):
     return odd_even_split(generator(dataset)), None
@@ -14,18 +15,13 @@ def uncached(generator: Callable, dataset: List, *args, **kwargs):
 def cached(generator: Callable, dataset: List, cache_dir: str, **parameters: Dict):
     path = pickle_path(cache_dir, **parameters)
     try:
-        return load(path), pd.read_csv(info_path(cache_dir)).query(
-            build_query({"path":path})
+        return compress_pickle.load(path), pd.read_csv(info_path(cache_dir)).query(
+            build_query({"path": path})
         )["key"].values[0]
     except (pickle.PickleError, FileNotFoundError):
         data = odd_even_split(generator(dataset))
     key = dump(data, cache_dir, path, **parameters)
     return (data, key)
-
-
-def load(path: str):
-    with open(path, "rb") as f:
-        return pickle.load(f)
 
 
 def build_info(path: str, parameters: Dict, key: str)->pd.DataFrame:
@@ -37,8 +33,7 @@ def build_info(path: str, parameters: Dict, key: str)->pd.DataFrame:
 
 
 def dump(data, cache_dir: str, path: str, **parameters: Dict)->str:
-    with open(path, "wb") as f:
-        pickle.dump(data, f)
+    compress_pickle.dump(data, path)
     key = hash_file(path)
     info_file = info_path(cache_dir)
     info = build_info(path, parameters, key)
