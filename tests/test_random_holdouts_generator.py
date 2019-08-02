@@ -1,4 +1,4 @@
-from holdouts_generator import holdouts_generator, clear_cache, random_holdouts, cached_holdouts_generator
+from holdouts_generator import holdouts_generator, clear_cache, cached_holdouts_generator
 import numpy as np
 from .utils import example_random_holdouts, skip_all, skip_none
 

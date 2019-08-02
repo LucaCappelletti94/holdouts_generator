@@ -1,5 +1,4 @@
-from holdouts_generator import holdouts_generator, clear_cache, random_holdouts, cached_holdouts_generator, skip, store_keras_result, load_result, delete_results
-import numpy as np
+from holdouts_generator import holdouts_generator, clear_cache, cached_holdouts_generator, skip, store_keras_result, load_result, delete_results
 from typing import Tuple, Dict
 from keras.datasets import boston_housing
 from .utils import example_random_holdouts
