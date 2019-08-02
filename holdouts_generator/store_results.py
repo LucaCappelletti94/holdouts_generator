@@ -92,7 +92,7 @@ def load_result(key: str, hyper_parameters: Dict = None, results_directory: str 
 
 
 def delete_results(results_directory: str = "results"):
-    """Delete the results stored in a given directory. 
+    """Delete the results stored in a given directory.
         results_directory: str = "results", directory where results are stores.
     """
     if os.path.exists(results_directory):
