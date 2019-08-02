@@ -4,6 +4,7 @@ from .various import odd_even_split, build_query
 from .hash import hash_file
 import os
 import pandas as pd
+import zlib
 import pickle
 import compress_pickle
 
@@ -18,7 +19,7 @@ def cached(generator: Callable, dataset: List, cache_dir: str, **parameters: Dic
         return compress_pickle.load(path), pd.read_csv(info_path(cache_dir)).query(
             build_query({"path": path})
         )["key"].values[0]
-    except (pickle.PickleError, FileNotFoundError):
+    except (pickle.PickleError, FileNotFoundError, AttributeError,  EOFError, ImportError, IndexError, zlib.error):
         data = odd_even_split(generator(dataset))
     key = dump(data, cache_dir, path, **parameters)
     return (data, key)
