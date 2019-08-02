@@ -1,4 +1,4 @@
-from holdouts_generator import holdouts_generator, clear_cache, chromosomal_holdouts, cached_holdouts_generator
+from holdouts_generator import holdouts_generator, clear_cache, cached_holdouts_generator
 import pandas as pd
 from .utils import example_chromosomal_holdouts
 
