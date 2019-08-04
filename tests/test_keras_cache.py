@@ -4,7 +4,8 @@ from keras.datasets import boston_housing
 from .utils import example_random_holdouts
 from keras import Sequential
 from keras.layers import Dense
-import time 
+import time
+
 
 def mlp()->Sequential:
     model = Sequential([
@@ -32,13 +33,13 @@ def train(training: Tuple, testing: Tuple, hyper_parameters: Dict):
         verbose=0
     ).history
     return {
-        "history":history,
-        "x_test":testing[0],
-        "y_test_true":testing[1],
-        "model":model,
-        "time":time.time() - start,
-        "hyper_parameters":hyper_parameters,
-        "parameters":parameters
+        "history": history,
+        "x_test": testing[0],
+        "y_test_true": testing[1],
+        "model": model,
+        "time": time.time() - start,
+        "hyper_parameters": hyper_parameters,
+        "parameters": parameters
     }
 
 
