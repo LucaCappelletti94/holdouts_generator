@@ -4,6 +4,7 @@ pandas
 dict_hash
 keras
 compress_pickle
+humanize
 
 [test]
 codacy-coverage

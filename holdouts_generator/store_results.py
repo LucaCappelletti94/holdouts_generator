@@ -7,9 +7,10 @@ from .utils import build_keys, build_query
 from keras import Model
 import shutil
 from json import dump
+import humanize
 
 
-def store_result(key: str, new_results: Dict, hyper_parameters: Dict = None, parameters: Dict = None, results_directory: str = "results"):
+def store_result(key: str, new_results: Dict, time:int, hyper_parameters: Dict = None, parameters: Dict = None, results_directory: str = "results"):
     """Store given results in a standard way, so that the skip function can use them.
         key: str, key identifier of holdout to be skipped.
         new_results: Dict, results to store.
@@ -26,7 +27,9 @@ def store_result(key: str, new_results: Dict, hyper_parameters: Dict = None, par
         **new_results,
         **build_keys(key, hyper_parameters),
         "hyper_parameters_path": hppath,
-        "parameters_path": ppath
+        "parameters_path": ppath,
+        "required_time": time,
+        "human_required_time": humanize.naturaldelta(time)
     }, index=[0])
     if hyper_parameters:
         with open(hppath, "w") as f:
@@ -39,7 +42,7 @@ def store_result(key: str, new_results: Dict, hyper_parameters: Dict = None, par
     results.to_csv(rpath, index=False)
 
 
-def store_keras_result(key: str, history: Dict, x_test: np.ndarray, y_test_true: np.ndarray, model: Model, hyper_parameters: Dict = None, parameters: Dict = None, save_model: bool = True, results_directory: str = "results"):
+def store_keras_result(key: str, history: Dict, x_test: np.ndarray, y_test_true: np.ndarray, model: Model, time:int, informations:Dict = None, hyper_parameters: Dict = None, parameters: Dict = None, save_model: bool = True, results_directory: str = "results"):
     """Store given keras model results in a standard way, so that the skip function can use them.
         key: str, key identifier of holdout to be skipped.
         history: Dict, training history to store.
@@ -58,14 +61,16 @@ def store_keras_result(key: str, history: Dict, x_test: np.ndarray, y_test_true:
     plpath = predictions_labels_path(results_directory, y_pred)
     tlpath = true_labels_path(results_directory, y_test_true)
 
+    informations = {} if informations is None else informations
     dfh = pd.DataFrame(history)
     store_result(key, {
         **dfh.iloc[-1].to_dict(),
+        **informations,
         "history_path": hpath,
         "model_path": mpath if save_model else None,
         "predictions_labels_path": plpath,
         "true_labels_path": tlpath
-    }, hyper_parameters, parameters, results_directory)
+    }, time, hyper_parameters, parameters, results_directory)
     dfh.to_csv(hpath, index=False)
     pd.DataFrame(y_pred).to_csv(plpath, index=False)
     pd.DataFrame(y_test_true).to_csv(tlpath, index=False)

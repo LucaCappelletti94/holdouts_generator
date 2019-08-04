@@ -4,7 +4,7 @@ from keras.datasets import boston_housing
 from .utils import example_random_holdouts
 from keras import Sequential
 from keras.layers import Dense
-
+import time 
 
 def mlp()->Sequential:
     model = Sequential([
@@ -19,6 +19,7 @@ def mlp()->Sequential:
 
 
 def train(training: Tuple, testing: Tuple, hyper_parameters: Dict):
+    start = time.time()
     model = mlp()
     parameters = {
         "shuffle": True
@@ -30,10 +31,21 @@ def train(training: Tuple, testing: Tuple, hyper_parameters: Dict):
         validation_data=testing,
         verbose=0
     ).history
-    return history, testing[0], testing[1], model, hyper_parameters, parameters
+    return {
+        "history":history,
+        "x_test":testing[0],
+        "y_test_true":testing[1],
+        "model":model,
+        "time":time.time() - start,
+        "hyper_parameters":hyper_parameters,
+        "parameters":parameters
+    }
 
 
 def test_keras_cache():
+    clear_cache()
+    delete_results()
+
     (x_train, y_train), _ = boston_housing.load_data()
     generator = cached_holdouts_generator(
         x_train, y_train, holdouts=example_random_holdouts, skip=skip)
@@ -49,10 +61,10 @@ def test_keras_cache():
         for (inner_training, inner_testing), inner_key, _ in inner(hyper_parameters):
             if inner_training is not None:
                 store_keras_result(
-                    inner_key, *train(inner_training, inner_testing, hyper_parameters))
+                    inner_key, **train(inner_training, inner_testing, hyper_parameters))
         if training is not None:
             store_keras_result(
-                outer_key, *train(training, testing, hyper_parameters))
+                outer_key, **train(training, testing, hyper_parameters))
 
     for _, outer_key, inner in generator(hyper_parameters):
         for _, inner_key, _ in inner(hyper_parameters):
