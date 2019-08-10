@@ -16,9 +16,12 @@ def uncached(generator: Callable, dataset: List, *args, **kwargs):
 def cached(generator: Callable, dataset: List, cache_dir: str, **parameters: Dict):
     path = pickle_path(cache_dir, **parameters)
     try:
-        return compress_pickle.load(path), pd.read_csv(info_path(cache_dir)).query(
+        key = pd.read_csv(info_path(cache_dir)).query(
             build_query({"path": path})
         )["key"].values[0]
+        if key != hash_file(path):
+            raise ValueError("Holdout has been tempered.")
+        return compress_pickle.load(path), key
     except (pickle.PickleError, FileNotFoundError, AttributeError,  EOFError, ImportError, IndexError, zlib.error):
         data = odd_even_split(generator(dataset))
     key = dump(data, cache_dir, path, **parameters)

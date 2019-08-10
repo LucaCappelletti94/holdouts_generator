@@ -16,9 +16,3 @@ example_chromosomal_holdouts = chromosomal_holdouts([
         [([12], [([7], None)]), ([11], [([7], None)])]
     )
 ])
-
-def skip_all(*args, **kwargs)->bool:
-    return True
-
-def skip_none(*args, **kwargs)->bool:
-    return False
