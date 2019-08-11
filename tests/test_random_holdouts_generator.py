@@ -1,6 +1,6 @@
-from holdouts_generator import holdouts_generator, clear_cache, cached_holdouts_generator
+from holdouts_generator import holdouts_generator, cached_holdouts_generator
 import numpy as np
-from .utils import example_random_holdouts
+from .utils import example_random_holdouts, clear_all_cache
 
 
 def run_this_twice():
@@ -31,7 +31,7 @@ def run_this_twice():
 
 
 def test_random_holdouts_generator():
-    clear_cache()
+    clear_all_cache()
     run_this_twice()
     run_this_twice()
-    clear_cache()
+    clear_all_cache()

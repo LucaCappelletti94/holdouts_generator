@@ -1,7 +1,7 @@
-from holdouts_generator import holdouts_generator, clear_cache, cached_holdouts_generator
+from holdouts_generator import holdouts_generator, cached_holdouts_generator
 import pandas as pd
 import numpy as np
-from .utils import example_chromosomal_holdouts
+from .utils import example_chromosomal_holdouts, clear_all_cache
 
 def run_this_twice():
 	x = pd.read_csv("test_dataset/x.csv", index_col=0)
@@ -23,7 +23,7 @@ def run_this_twice():
 			]
 
 def test_chromosomal_holdouts_generator():
-	clear_cache()
+	clear_all_cache()
 	run_this_twice()
 	run_this_twice()
-	clear_cache()
+	clear_all_cache()

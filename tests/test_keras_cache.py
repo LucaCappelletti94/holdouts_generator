@@ -1,11 +1,11 @@
-from holdouts_generator import clear_cache, cached_holdouts_generator, skip, store_keras_result, load_result, delete_results
+from holdouts_generator import cached_holdouts_generator, skip, store_keras_result, load_result
 from typing import Tuple, Dict
 from keras.datasets import boston_housing
-from .utils import example_random_holdouts
+from .utils import example_random_holdouts, clear_all_cache
 from keras import Sequential
 from keras.layers import Dense
 import time
-
+import pytest
 
 def mlp()->Sequential:
     model = Sequential([
@@ -44,8 +44,7 @@ def train(training: Tuple, testing: Tuple, hyper_parameters: Dict):
 
 
 def test_keras_cache():
-    clear_cache()
-    delete_results()
+    clear_all_cache()
 
     (x_train, y_train), _ = boston_housing.load_data()
     generator = cached_holdouts_generator(
@@ -61,6 +60,8 @@ def test_keras_cache():
     for (training, testing), outer_key, inner in generator(hyper_parameters):
         for (inner_training, inner_testing), inner_key, _ in inner(hyper_parameters):
             store_keras_result(inner_key, **train(inner_training, inner_testing, hyper_parameters))
+            with pytest.raises(ValueError):
+                store_keras_result(inner_key, **train(inner_training, inner_testing, hyper_parameters))
         store_keras_result(outer_key, **train(training, testing, hyper_parameters))
 
     for (training, testing), outer_key, inner in generator(hyper_parameters):
@@ -69,5 +70,4 @@ def test_keras_cache():
         assert not inner()
         load_result(outer_key, hyper_parameters)
 
-    clear_cache()
-    delete_results()
+    clear_all_cache()

@@ -20,6 +20,12 @@ def store_result(key: str, new_results: Dict, time: int, hyper_parameters: Dict 
         parameters: Dict, parameters used for tuning the model.
         results_directory: str = "results", directory where to store the results.
     """
+    if result_exists(key, hyper_parameters, results_directory):
+        raise ValueError("Given key {key} and hyper_parameters {hyper_parameters} map already to a result in directory {results_directory}!".format(
+            key=key,
+            hyper_parameters=hyper_parameters,
+            results_directory=results_directory
+        ))
     os.makedirs(results_directory, exist_ok=True)
     hppath = None if hyper_parameters is None else hyper_parameters_path(
         results_directory, hyper_parameters)
@@ -45,14 +51,15 @@ def store_result(key: str, new_results: Dict, time: int, hyper_parameters: Dict 
         results = new_row
     store_results_csv(results, results_directory)
 
-def is_result_directory(results_directory: str)->bool:
+
+def is_result_directory(results_directory: str) -> bool:
     """Return boolean representing if given directory contains results.
         results_directory: str, directory to determine if contains results.
     """
-    return os.path.isdir(results_directory) and os.path.isfile(results_path(results_directory))
+    return os.path.isfile(results_path(results_directory))
 
 
-def get_all_results_directories(rootdir:str):
+def get_all_results_directories(rootdir: str):
     """Return list of all result directories under rootdir, including rootdir if contains results.
         rootdir:str, directory from which to start.
     """
@@ -61,6 +68,7 @@ def get_all_results_directories(rootdir:str):
         for root, subdirs, files in os.walk(rootdir) for subdir in subdirs
         if is_result_directory(os.path.join(root, subdir))
     ]
+
 
 def store_results_csv(results: pd.DataFrame, results_directory: str = "results"):
     """Store results csv from given results directory.
@@ -82,8 +90,13 @@ def store_keras_result(key: str, history: Dict, x_test: np.ndarray, y_test_true:
         save_model:bool=True, whetever to save or not the model.
         results_directory: str = "results", directory where to store the results.
     """
+    if result_exists(key, hyper_parameters, results_directory):
+        raise ValueError("Given key {key} and hyper_parameters {hyper_parameters} map already to a result in directory {results_directory}!".format(
+            key=key,
+            hyper_parameters=hyper_parameters,
+            results_directory=results_directory
+        ))
     y_pred = model.predict(x_test)
-
     hpath = history_path(results_directory, history)
     mpath = trained_model_path(results_directory, key, hyper_parameters)
     plpath = predictions_labels_path(results_directory, y_pred)
@@ -122,6 +135,17 @@ def load_result(key: str, hyper_parameters: Dict = None, results_directory: str 
     return load_results(results_directory).query(
         build_query(build_keys(key, hyper_parameters))
     ).to_dict('records')[0]
+
+
+def result_exists(key: str, hyper_parameters: Dict = None, results_directory: str = "results") -> bool:
+    """Return boolean representing if given key and hyper_parameters map to an existing result.
+        key: str, key identifier of holdout to be skipped.
+        hyper_parameters: Dict, hyper parameters to check for.
+        results_directory: str = "results", directory where to store the results.
+    """
+    return os.path.exists(results_path(results_directory)) and not load_results(results_directory).query(
+        build_query(build_keys(key, hyper_parameters))
+    ).empty
 
 
 def delete_results(results_directory: str = "results"):
@@ -234,4 +258,5 @@ def merge_all_results(root_results_directories: str, target_results_directory: s
         root_results_directories:str, directory from which to start..
         target_results_directory:str, target directory to copy to.
     """
-    merge_results(get_all_results_directories(root_results_directories), target_results_directory)
+    merge_results(get_all_results_directories(
+        root_results_directories), target_results_directory)
