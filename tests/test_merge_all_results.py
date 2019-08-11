@@ -1,4 +1,4 @@
-from holdouts_generator import merge_all_results, cached_holdouts_generator, random_holdouts, store_result, load_results, delete_all_duplicate_results
+from holdouts_generator import merge_all_results, cached_holdouts_generator, random_holdouts, store_result, delete_all_duplicate_results
 from typing import Callable
 import numpy as np
 from .utils import clear_all_cache
