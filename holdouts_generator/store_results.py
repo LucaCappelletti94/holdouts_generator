@@ -251,7 +251,7 @@ def merge_results(results_directories: List[str], target_results_directory: str)
         p.close()
         p.join()
     store_results_csv(pd.concat(targets), target_results_directory)
-
+    remove_duplicate_results(target_results_directory)
 
 def merge_all_results(root_results_directories: str, target_results_directory: str):
     """Copies the results under given root_results_directories into a given target directory.
@@ -260,3 +260,12 @@ def merge_all_results(root_results_directories: str, target_results_directory: s
     """
     merge_results(get_all_results_directories(
         root_results_directories), target_results_directory)
+
+
+def remove_duplicate_results(results_directory: str = "results"):
+    """Remove duplicate results from given results directory.
+        results_directory: str = "results", directory where results are stores.
+    """
+    store_results_csv(load_results(results_directory).drop_duplicates([
+        "holdouts_key", "hyper_parameters_key"
+    ]), results_directory)
