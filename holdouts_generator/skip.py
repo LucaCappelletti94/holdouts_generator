@@ -10,6 +10,6 @@ def skip(key: str, hyper_parameters: Dict, results_directory: str)->bool:
         results_directory: str = "results", directory where to store the results.
     """
     return is_result_directory(results_directory) and (
-        not load_results(results_directory).query(build_query(build_keys(key, hyper_parameters))).empty and
+        not load_results(results_directory).query(build_query(build_keys(key, hyper_parameters))).empty or
         is_work_in_progress(key, results_directory)
     )

@@ -60,16 +60,13 @@ def test_keras_cache():
 
     for (training, testing), outer_key, inner in generator(hyper_parameters):
         for (inner_training, inner_testing), inner_key, _ in inner(hyper_parameters):
-            if inner_training is not None:
-                store_keras_result(
-                    inner_key, **train(inner_training, inner_testing, hyper_parameters))
-        if training is not None:
-            store_keras_result(
-                outer_key, **train(training, testing, hyper_parameters))
+            store_keras_result(inner_key, **train(inner_training, inner_testing, hyper_parameters))
+        store_keras_result(outer_key, **train(training, testing, hyper_parameters))
 
-    for _, outer_key, inner in generator(hyper_parameters):
-        for _, inner_key, _ in inner(hyper_parameters):
-            load_result(inner_key, hyper_parameters)
+    for (training, testing), outer_key, inner in generator(hyper_parameters):
+        assert training is None
+        assert testing is None
+        assert not inner()
         load_result(outer_key, hyper_parameters)
 
     clear_cache()
