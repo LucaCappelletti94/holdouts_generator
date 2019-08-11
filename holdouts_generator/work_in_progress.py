@@ -2,7 +2,7 @@ from .utils import work_in_progress_path, build_query, build_keys
 import pandas as pd
 import os
 from typing import Dict
-from .store_results import load_results, is_result_directory, result_exists
+from .store_results import load_results, is_result_directory, result_exists, get_all_results_directories
 
 
 def skip(key: str, hyper_parameters: Dict, results_directory: str) -> bool:
@@ -74,3 +74,11 @@ def clear_work_in_progress(results_directory: str = "results"):
     """
     if os.path.exists(work_in_progress_path(results_directory)):
         os.remove(work_in_progress_path(results_directory))
+
+
+def clear_all_work_in_progress(root_results_directory: str = "results"):
+    """Delete work in progress log for given results directory.
+        root_results_directory: str = "results", directory where results are stored.
+    """
+    for results_directory in get_all_results_directories(root_results_directory):
+        clear_work_in_progress(results_directory)
