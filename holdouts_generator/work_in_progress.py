@@ -10,7 +10,7 @@ def load_work_in_progress(results_directory: str = "results"):
     return pd.read_csv(work_in_progress_path(results_directory))
 
 
-def store_work_in_progress(wip:pd.DataFrame, results_directory: str = "results"):
+def store_work_in_progress(wip: pd.DataFrame, results_directory: str = "results"):
     """Store work in progress holdouts for given results directory.
         wip: pd.DataFrame, standard dataframe of work in progress to store.
         results_directory: str = "results", directory where results are stored.
@@ -30,8 +30,8 @@ def add_work_in_progress(key: str, results_directory: str = "results"):
             results_directory=results_directory
         ))
     new_row = pd.DataFrame({
-        "key":key
-        },
+        "key": key
+    },
         index=[0]
     )
     try:
@@ -42,7 +42,7 @@ def add_work_in_progress(key: str, results_directory: str = "results"):
     except FileNotFoundError:
         wip = new_row
     store_work_in_progress(wip)
-    
+
 
 def is_work_in_progress(key: str, results_directory: str = "results") -> bool:
     """Return boolean representing if given key is under work for given results directory.

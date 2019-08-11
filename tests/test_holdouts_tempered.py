@@ -1,4 +1,4 @@
-from holdouts_generator import store_result, random_holdouts, cached_holdouts_generator, clear_cache
+from holdouts_generator import random_holdouts, cached_holdouts_generator, clear_cache
 from glob import glob
 import os
 import numpy as np

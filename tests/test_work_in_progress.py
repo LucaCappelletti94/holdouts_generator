@@ -1,4 +1,4 @@
-from holdouts_generator import random_holdouts, cached_holdouts_generator, clear_cache, delete_results, delete_deprecated_results, add_work_in_progress, clear_work_in_progress
+from holdouts_generator import random_holdouts, cached_holdouts_generator, clear_cache, delete_results, add_work_in_progress, clear_work_in_progress
 import numpy as np
 import pytest
 

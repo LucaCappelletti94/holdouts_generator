@@ -1,6 +1,5 @@
 from typing import Dict
-from os.path import exists
-from .utils import build_query, build_keys, results_path
+from .utils import build_query, build_keys
 from .store_results import load_results, is_result_directory
 from .work_in_progress import is_work_in_progress
 
