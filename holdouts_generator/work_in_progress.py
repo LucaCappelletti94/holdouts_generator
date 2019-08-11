@@ -2,7 +2,6 @@ from .utils import work_in_progress_path, build_query, build_keys
 import pandas as pd
 import os
 from typing import Dict
-from dict_hash import sha256
 
 
 def load_work_in_progress(results_directory: str = "results"):
