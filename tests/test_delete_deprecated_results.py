@@ -1,4 +1,4 @@
-from holdouts_generator import store_result, random_holdouts, cached_holdouts_generator, delete_deprecated_results, skip
+from holdouts_generator import store_result, random_holdouts, cached_holdouts_generator, delete_all_deprecated_results, skip
 from holdouts_generator.utils import delete_holdout_by_key
 import numpy as np
 import pytest
@@ -27,6 +27,6 @@ def make_deprecated_results():
 def test_delete_deprecated_results():
     clear_all_cache()
     make_deprecated_results()
-    assert len(delete_deprecated_results()) == 1
-    assert len(delete_deprecated_results()) == 0
+    assert len(delete_all_deprecated_results(".holdouts", "results")) == 1
+    assert len(delete_all_deprecated_results(".holdouts", "results")) == 0
     clear_all_cache()

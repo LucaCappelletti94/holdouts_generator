@@ -67,7 +67,7 @@ def get_all_results_directories(rootdir: str):
         os.path.join(root, subdir)
         for root, subdirs, files in os.walk(rootdir) for subdir in subdirs
         if is_result_directory(os.path.join(root, subdir))
-    ]
+    ] + ([rootdir] if is_result_directory(rootdir) else [])
 
 
 def store_results_csv(results: pd.DataFrame, results_directory: str = "results"):
@@ -186,7 +186,7 @@ def delete_result_by_key(key: str, results_directory: str = "results"):
 
 def delete_deprecated_results(cache_dir: str = ".holdouts", results_directory: str = "results") -> List[str]:
     """Delete the results which do not map anymore to a valid holdout and return the list of deleted keys.
-        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+        cache_dir:str=".holdouts", the holdouts cache directory to be deleted.
         results_directory: str = "results", directory where results are stores.
     """
     results = load_results(results_directory)
@@ -204,7 +204,7 @@ def delete_deprecated_results(cache_dir: str = ".holdouts", results_directory: s
 def update_path(path: str, old_root: str, new_root: str) -> str:
     """Return path with old root string in path replaced with a new given one.
         path:str, the path to update.
-        old_root:str, old root to remove.
+        old_root:str, old root to delete.
         new_root:str, new root to apply.
     """
     return new_root + path[len(old_root):]
@@ -251,21 +251,41 @@ def merge_results(results_directories: List[str], target_results_directory: str)
         p.close()
         p.join()
     store_results_csv(pd.concat(targets), target_results_directory)
-    remove_duplicate_results(target_results_directory)
+    delete_duplicate_results(target_results_directory)
 
-def merge_all_results(root_results_directories: str, target_results_directory: str):
-    """Copies the results under given root_results_directories into a given target directory.
-        root_results_directories:str, directory from which to start..
+
+def merge_all_results(root_results_directory: str, target_results_directory: str):
+    """Copies the results under given root_results_directory into a given target directory.
+        root_results_directory:str, directory from which to start.
         target_results_directory:str, target directory to copy to.
     """
     merge_results(get_all_results_directories(
-        root_results_directories), target_results_directory)
+        root_results_directory), target_results_directory)
 
 
-def remove_duplicate_results(results_directory: str = "results"):
-    """Remove duplicate results from given results directory.
+def delete_duplicate_results(results_directory: str = "results"):
+    """Delete duplicate results from given results directory.
         results_directory: str = "results", directory where results are stores.
     """
     store_results_csv(load_results(results_directory).drop_duplicates([
         "holdouts_key", "hyper_parameters_key"
     ]), results_directory)
+
+
+def delete_all_duplicate_results(root_results_directory: str):
+    """Delete duplicate results under given root_results_directory into a given target directory.
+        root_results_directory:str, directory from which to start.
+    """
+    for results_directory in get_all_results_directories(root_results_directory):
+        delete_duplicate_results(results_directory)
+
+
+def delete_all_deprecated_results(cache_dir: str, root_results_directory: str)->List[str]:
+    """Delete the results which do not map anymore to a valid holdout and return the list of deleted keys.
+        cache_dir:str=".holdouts", the holdouts cache directory to be deleted.
+        root_results_directory:str, directory from which to start.
+    """
+    return [
+        key for results_directory in get_all_results_directories(root_results_directory)
+        for key in delete_deprecated_results(cache_dir, results_directory)
+    ]

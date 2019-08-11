@@ -1,4 +1,4 @@
-from holdouts_generator import merge_all_results, cached_holdouts_generator, random_holdouts, store_result, load_results
+from holdouts_generator import merge_all_results, cached_holdouts_generator, random_holdouts, store_result, load_results, delete_all_duplicate_results
 from typing import Callable
 import numpy as np
 from .utils import clear_all_cache
@@ -24,6 +24,7 @@ def test_merge_results():
 	make_results(generator, directory_A)
 	make_results(generator, directory_B)
 	merge_all_results("root", target)
+	delete_all_duplicate_results("root")
 	clear_all_cache(directory_A)
 	clear_all_cache(directory_B)
 	clear_all_cache(target)
