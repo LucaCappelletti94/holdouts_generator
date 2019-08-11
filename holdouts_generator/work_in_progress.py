@@ -2,6 +2,19 @@ from .utils import work_in_progress_path, build_query, build_keys
 import pandas as pd
 import os
 from typing import Dict
+from .store_results import load_results, is_result_directory, result_exists
+
+
+def skip(key: str, hyper_parameters: Dict, results_directory: str) -> bool:
+    """Default function to choose to load or not a given holdout.
+        key: str, key identifier of holdout to be skipped.
+        hyper_parameters: Dict, hyper parameters to check for.
+        results_directory: str = "results", directory where to store the results.
+    """
+    return (
+        is_work_in_progress(key, hyper_parameters, results_directory) or
+        result_exists(key, hyper_parameters, results_directory)
+    )
 
 
 def load_work_in_progress(results_directory: str = "results"):
@@ -26,8 +39,8 @@ def add_work_in_progress(key: str, hyper_parameters: Dict = None, results_direct
         hyper_parameters: Dict, hyper parameters to check for.
         results_directory: str = "results", directory where results are stored.
     """
-    if is_work_in_progress(key, hyper_parameters, results_directory):
-        raise ValueError("Given key {key} for given directory {results_directory} is already work in progress!".format(
+    if skip(key, hyper_parameters, results_directory):
+        raise ValueError("Given key {key} for given directory {results_directory} is already work in progress or completed!".format(
             key=key,
             results_directory=results_directory
         ))
@@ -45,12 +58,14 @@ def add_work_in_progress(key: str, hyper_parameters: Dict = None, results_direct
     store_work_in_progress(wip, results_directory)
 
 
-def is_work_in_progress(key: str, hyper_parameters:Dict=None, results_directory: str = "results") -> bool:
+def is_work_in_progress(key: str, hyper_parameters: Dict = None, results_directory: str = "results") -> bool:
     """Return boolean representing if given key is under work for given results directory.
         key: str, key identifier of holdout.
         results_directory: str = "results", directory where results are stored.
     """
-    return os.path.isfile(work_in_progress_path(results_directory)) and not load_work_in_progress(results_directory).query(build_query(build_keys(key, hyper_parameters))).empty
+    return os.path.isfile(work_in_progress_path(results_directory)) and not load_work_in_progress(results_directory).query(
+        build_query(build_keys(key, hyper_parameters))
+    ).empty
 
 
 def clear_work_in_progress(results_directory: str = "results"):

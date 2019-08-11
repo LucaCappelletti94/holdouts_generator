@@ -59,6 +59,17 @@ def is_result_directory(results_directory: str) -> bool:
     return os.path.isfile(results_path(results_directory))
 
 
+def result_exists(key: str, hyper_parameters: Dict = None, results_directory: str = "results") -> bool:
+    """Return boolean representing if given key is work completed for given results directory.
+        key: str, key identifier of holdout.
+        hyper_parameters: Dict, hyper parameters to check for.
+        results_directory: str = "results", directory where results are stored.
+    """
+    return is_result_directory(results_directory) and not load_results(results_directory).query(
+        build_query(build_keys(key, hyper_parameters))
+    ).empty
+
+
 def get_all_results_directories(rootdir: str):
     """Return list of all result directories under rootdir, including rootdir if contains results.
         rootdir:str, directory from which to start.
@@ -135,18 +146,6 @@ def load_result(key: str, hyper_parameters: Dict = None, results_directory: str 
     return load_results(results_directory).query(
         build_query(build_keys(key, hyper_parameters))
     ).to_dict('records')[0]
-
-
-def result_exists(key: str, hyper_parameters: Dict = None, results_directory: str = "results") -> bool:
-    """Return boolean representing if given key and hyper_parameters map to an existing result.
-        key: str, key identifier of holdout to be skipped.
-        hyper_parameters: Dict, hyper parameters to check for.
-        results_directory: str = "results", directory where to store the results.
-    """
-    return os.path.exists(results_path(results_directory)) and not load_results(results_directory).query(
-        build_query(build_keys(key, hyper_parameters))
-    ).empty
-
 
 def delete_results(results_directory: str = "results"):
     """Delete the results stored in a given directory.

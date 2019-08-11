@@ -6,7 +6,6 @@ holdouts_generator/__version__.py
 holdouts_generator/chromosomal_holdout.py
 holdouts_generator/holdouts_generator.py
 holdouts_generator/random_holdout.py
-holdouts_generator/skip.py
 holdouts_generator/store_results.py
 holdouts_generator/work_in_progress.py
 holdouts_generator.egg-info/PKG-INFO
