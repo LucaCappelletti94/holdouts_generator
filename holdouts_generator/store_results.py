@@ -1,16 +1,18 @@
-from typing import Dict
+from typing import Dict, List, Tuple
 import os
 import pandas as pd
 import numpy as np
 from .utils import results_path, hyper_parameters_path, parameters_path, history_path, trained_model_path, true_labels_path, predictions_labels_path
-from .utils import build_keys, build_query
+from .utils import build_keys, build_query, load_cache, is_valid_holdout_key, get_path_from_key, delete_holdout_by_key
 from keras import Model
 import shutil
 from json import dump
 import humanize
+from auto_tqdm import tqdm
+from multiprocessing import cpu_count, Pool
 
 
-def store_result(key: str, new_results: Dict, time:int, hyper_parameters: Dict = None, parameters: Dict = None, results_directory: str = "results"):
+def store_result(key: str, new_results: Dict, time: int, hyper_parameters: Dict = None, parameters: Dict = None, results_directory: str = "results"):
     """Store given results in a standard way, so that the skip function can use them.
         key: str, key identifier of holdout to be skipped.
         new_results: Dict, results to store.
@@ -18,12 +20,12 @@ def store_result(key: str, new_results: Dict, time:int, hyper_parameters: Dict =
         parameters: Dict, parameters used for tuning the model.
         results_directory: str = "results", directory where to store the results.
     """
+    os.makedirs(results_directory, exist_ok=True)
     hppath = None if hyper_parameters is None else hyper_parameters_path(
         results_directory, hyper_parameters)
     ppath = None if parameters is None else parameters_path(
         results_directory, parameters)
-    rpath = results_path(results_directory)
-    results = pd.DataFrame({
+    new_row = pd.DataFrame({
         **new_results,
         **build_keys(key, hyper_parameters),
         "hyper_parameters_path": hppath,
@@ -31,18 +33,43 @@ def store_result(key: str, new_results: Dict, time:int, hyper_parameters: Dict =
         "required_time": time,
         "human_required_time": humanize.naturaldelta(time)
     }, index=[0])
-    if hyper_parameters:
+    if hyper_parameters is not None:
         with open(hppath, "w") as f:
             dump(hyper_parameters, f)
-    if parameters:
+    if parameters is not None:
         with open(ppath, "w") as f:
             dump(parameters, f)
-    if os.path.exists(rpath):
-        results = pd.concat([pd.read_csv(rpath), results])
-    results.to_csv(rpath, index=False)
+    try:
+        results = pd.concat([load_results(results_directory), new_row])
+    except FileNotFoundError:
+        results = new_row
+    store_results_csv(results, results_directory)
+
+def is_result_directory(results_directory: str)->bool:
+    """Return boolean representing if given directory contains results.
+        results_directory: str, directory to determine if contains results.
+    """
+    return os.path.isdir(results_directory) and os.path.isfile(results_path(results_directory))
 
 
-def store_keras_result(key: str, history: Dict, x_test: np.ndarray, y_test_true: np.ndarray, model: Model, time:int, informations:Dict = None, hyper_parameters: Dict = None, parameters: Dict = None, save_model: bool = True, results_directory: str = "results"):
+def get_all_results_directories(rootdir:str):
+    """Return list of all result directories under rootdir, including rootdir if contains results.
+        rootdir:str, directory from which to start.
+    """
+    return [
+        os.path.join(root, subdir)
+        for root, subdirs, files in os.walk(rootdir) for subdir in subdirs
+        if is_result_directory(os.path.join(root, subdir))
+    ]
+
+def store_results_csv(results: pd.DataFrame, results_directory: str = "results"):
+    """Store results csv from given results directory.
+        results_directory: str = "results", directory where to store the results.
+    """
+    results.to_csv(results_path(results_directory), index=False)
+
+
+def store_keras_result(key: str, history: Dict, x_test: np.ndarray, y_test_true: np.ndarray, model: Model, time: int, informations: Dict = None, hyper_parameters: Dict = None, parameters: Dict = None, save_model: bool = True, results_directory: str = "results"):
     """Store given keras model results in a standard way, so that the skip function can use them.
         key: str, key identifier of holdout to be skipped.
         history: Dict, training history to store.
@@ -78,7 +105,7 @@ def store_keras_result(key: str, history: Dict, x_test: np.ndarray, y_test_true:
         model.save(mpath)
 
 
-def load_results(results_directory: str = "results"):
+def load_results(results_directory: str = "results") -> pd.DataFrame:
     """Load standard results.
         results_directory: str = "results", directory where results are stored.
     """
@@ -102,3 +129,108 @@ def delete_results(results_directory: str = "results"):
     """
     if os.path.exists(results_directory):
         shutil.rmtree(results_directory)
+
+
+def is_valid_path(path: str, results_directory: str) -> bool:
+    """Return a boolean represing if the given path is valid.
+        path:str, the path to be tested.
+        results_directory: str, directory where results are stores.
+    """
+    return not pd.isna(path) and isinstance(path, str) and path.startswith(results_directory) and os.path.isfile(path)
+
+
+def get_paths_columns(df: pd.DataFrame) -> List[str]:
+    """Return columns deemed as paths from given dataframe.
+        df:pd.DataFrame, dataframe to analyze.
+    """
+    return [path for path in df if path.endswith("_path")]
+
+
+def delete_result_by_key(key: str, results_directory: str = "results"):
+    """Delete the results stored in a given directory.
+        results_directory: str = "results", directory where results are stores.
+    """
+    results = load_results(results_directory)
+    paths = get_paths_columns(results)
+    mask = results.holdouts_key == key
+    for path in results[paths][mask].values.flatten():
+        if is_valid_path(path, results_directory):
+            os.remove(path)
+    store_results_csv(results[~mask], results_directory)
+
+
+def delete_deprecated_results(cache_dir: str = ".holdouts", results_directory: str = "results") -> List[str]:
+    """Delete the results which do not map anymore to a valid holdout and return the list of deleted keys.
+        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+        results_directory: str = "results", directory where results are stores.
+    """
+    results = load_results(results_directory)
+    holdouts = load_cache(cache_dir)
+    keys = []
+    for key in np.unique(results.holdouts_key):
+        if not holdouts.key.eq(key).any() or not is_valid_holdout_key(
+            get_path_from_key(holdouts, key), key
+        ):
+            delete_result_by_key(key, results_directory)
+            keys.append(key)
+    return keys
+
+
+def update_path(path: str, old_root: str, new_root: str) -> str:
+    """Return path with old root string in path replaced with a new given one.
+        path:str, the path to update.
+        old_root:str, old root to remove.
+        new_root:str, new root to apply.
+    """
+    return new_root + path[len(old_root):]
+
+
+def copy_file_mkdir(job: Tuple[str, str]):
+    source, destination = job
+    os.makedirs(os.path.dirname(destination), exist_ok=True)
+    shutil.copy(source, destination)
+
+
+def merge_results(results_directories: List[str], target_results_directory: str):
+    """Copies the results from the given results_directories into a given target directory.
+        results_directories:List[str], list of directories to copy from.
+        target_results_directory:str, target directory to copy to.
+    """
+    os.makedirs(target_results_directory, exist_ok=True)
+    sources = [
+        load_results(results_directory)
+        for results_directory in results_directories
+    ]
+    targets = []
+    for original, results_directory in zip(sources, results_directories):
+        target = original.copy()
+        paths = get_paths_columns(target)
+        target[paths] = target[paths].applymap(lambda value: update_path(
+            value,
+            results_directory,
+            target_results_directory
+        ) if is_valid_path(value, results_directory) else value)
+        targets.append(target)
+
+    jobs = [
+        (source_path, target_path) for ori, upd, results_directory in zip(
+            sources, targets, results_directories
+        ) for source_path, target_path in zip(
+            ori.values.flatten(),
+            upd.values.flatten()
+        ) if is_valid_path(source_path, results_directory)
+    ]
+    with Pool(cpu_count()) as p:
+        list(tqdm(p.imap(copy_file_mkdir, jobs),
+                  total=len(jobs), desc="Copying files"))
+        p.close()
+        p.join()
+    store_results_csv(pd.concat(targets), target_results_directory)
+
+
+def merge_all_results(root_results_directories: str, target_results_directory: str):
+    """Copies the results under given root_results_directories into a given target directory.
+        root_results_directories:str, directory from which to start..
+        target_results_directory:str, target directory to copy to.
+    """
+    merge_results(get_all_results_directories(root_results_directories), target_results_directory)

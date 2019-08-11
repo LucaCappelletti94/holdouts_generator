@@ -16,11 +16,10 @@ def uncached(generator: Callable, dataset: List, *args, **kwargs):
 def cached(generator: Callable, dataset: List, cache_dir: str, **parameters: Dict):
     path = pickle_path(cache_dir, **parameters)
     try:
-        key = pd.read_csv(info_path(cache_dir)).query(
-            build_query({"path": path})
-        )["key"].values[0]
-        if key != hash_file(path):
-            raise ValueError("Holdout has been tempered.")
+        holdouts = load_cache(cache_dir)
+        key = get_key_from_path(holdouts, path)
+        if not is_valid_holdout_key(path, key):
+            raise ValueError("Holdout has been tempered with!")
         return compress_pickle.load(path), key
     except (pickle.PickleError, FileNotFoundError, AttributeError,  EOFError, ImportError, IndexError, zlib.error):
         data = odd_even_split(generator(dataset))
@@ -28,7 +27,38 @@ def cached(generator: Callable, dataset: List, cache_dir: str, **parameters: Dic
     return (data, key)
 
 
-def build_info(path: str, parameters: Dict, key: str)->pd.DataFrame:
+def get_key_from_path(holdouts: pd.DataFrame, path: str) -> str:
+    """Return holdout's key matched to given holdout's path.
+        holdouts:pd.DataFrame, dataframe of the holdouts' cache.
+        path:str, the holdout's path.
+    """
+    return holdouts.query(
+        build_query({"path": path})
+    )["key"].values[0]
+
+
+def get_path_from_key(holdouts: pd.DataFrame, key: str) -> str:
+    """Return holdout's path matched to given holdout's key.
+        holdouts:pd.DataFrame, dataframe of the holdouts' cache.
+        key:str, the holdout's key.
+    """
+    return holdouts.query(
+        build_query({"key": key})
+    )["path"].values[0]
+
+
+def is_valid_holdout_key(path: str, key: str) -> bool:
+    """Return bool representing if given key is correct sign for given holdout's path.
+        path:str, the holdout's path.
+        key:str, the holdout's key.
+    """
+    try:
+        return hash_file(path) == key
+    except FileNotFoundError:
+        return False
+
+
+def build_info(path: str, parameters: Dict, key: str) -> pd.DataFrame:
     return pd.DataFrame({
         "path": path,
         "key": key,
@@ -36,18 +66,19 @@ def build_info(path: str, parameters: Dict, key: str)->pd.DataFrame:
     }, index=[0])
 
 
-def dump(data, cache_dir: str, path: str, **parameters: Dict)->str:
+def dump(data, cache_dir: str, path: str, **parameters: Dict) -> str:
     compress_pickle.dump(data, path)
     key = hash_file(path)
-    info_file = info_path(cache_dir)
-    info = build_info(path, parameters, key)
-    if os.path.exists(info_file):
-        info = pd.concat([pd.read_csv(info_file), info])
-    info.to_csv(info_file, index=False)
+    new_row = build_info(path, parameters, key)
+    try:
+        holdouts = pd.concat([load_cache(cache_dir), new_row])
+    except FileNotFoundError:
+        holdouts = new_row
+    store_cache(holdouts, cache_dir)
     return key
 
 
-def get_holdout_key(cache_dir: str, **parameters: Dict)->str:
+def get_holdout_key(cache_dir: str, **parameters: Dict) -> str:
     """Return key, if cached, for given holdout else return None.
         cache_dir:str, cache directory to load data from
         parameters:Dict, parameters used to generated the holdout.
@@ -56,3 +87,40 @@ def get_holdout_key(cache_dir: str, **parameters: Dict)->str:
         return pd.read_csv(info_path(cache_dir)).query(build_query(parameters))["key"].values[0]
     except (FileNotFoundError, IndexError):
         return None
+
+
+def load_cache(cache_dir: str) -> pd.DataFrame:
+    """Load the holdouts cache.
+        cache_dir:str=".holdouts", the holdouts cache directory.
+    """
+    return pd.read_csv(info_path(cache_dir))
+
+
+def store_cache(holdouts: pd.DataFrame, cache_dir: str):
+    """Store the holdouts cache.
+        holdouts:pd.DataFrame, dataframe of the holdouts' cache.
+        cache_dir:str=".holdouts", the holdouts cache directory.
+    """
+    holdouts.to_csv(info_path(cache_dir), index=False)
+
+
+def delete_deprecated_cache(cache_dir: str = ".holdouts"):
+    """Delete the cache which do not map anymore to a valid holdout.
+        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+    """
+    holdouts = load_cache(cache_dir)
+    for path, key in zip(holdouts.path, holdouts.key):
+        if not is_valid_holdout_key(path, key):
+            delete_holdout_by_key(key, cache_dir)
+
+
+def delete_holdout_by_key(key: str, cache_dir: str = ".holdouts"):
+    """Delete holdout with given key.
+        cache_dir:str=".holdouts", the holdouts cache directory.
+        key:str, the holdout's key. 
+    """
+    holdouts = load_cache(cache_dir)
+    path = get_path_from_key(holdouts, key)
+    if os.path.exists(path):
+        os.remove(path)
+    store_cache(holdouts[holdouts.key != key], cache_dir)
