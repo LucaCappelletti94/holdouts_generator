@@ -1,8 +1,8 @@
 from typing import Dict
 from os.path import exists
-from pandas import read_csv
 from .utils import build_query, build_keys, results_path
-
+from .store_results import load_results, is_result_directory
+from .work_in_progress import is_work_in_progress
 
 def skip(key: str, hyper_parameters: Dict, results_directory: str)->bool:
     """Default function to choose to load or not a given holdout.
@@ -10,5 +10,7 @@ def skip(key: str, hyper_parameters: Dict, results_directory: str)->bool:
         hyper_parameters: Dict, hyper parameters to check for.
         results_directory: str = "results", directory where to store the results.
     """
-    path = results_path(results_directory)
-    return exists(path) and not read_csv(path).query(build_query(build_keys(key, hyper_parameters))).empty
+    return is_result_directory(results_directory) and (
+        not load_results(results_directory).query(build_query(build_keys(key, hyper_parameters))).empty and
+        is_work_in_progress(key, results_directory)
+    )

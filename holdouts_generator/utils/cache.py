@@ -117,7 +117,7 @@ def delete_deprecated_cache(cache_dir: str = ".holdouts"):
 def delete_holdout_by_key(key: str, cache_dir: str = ".holdouts"):
     """Delete holdout with given key.
         cache_dir:str=".holdouts", the holdouts cache directory.
-        key:str, the holdout's key. 
+        key:str, the holdout's key.
     """
     holdouts = load_cache(cache_dir)
     path = get_path_from_key(holdouts, key)

@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 from .utils import results_path, hyper_parameters_path, parameters_path, history_path, trained_model_path, true_labels_path, predictions_labels_path
-from .utils import build_keys, build_query, load_cache, is_valid_holdout_key, get_path_from_key, delete_holdout_by_key
+from .utils import build_keys, build_query, load_cache, is_valid_holdout_key, get_path_from_key
 from keras import Model
 import shutil
 from json import dump
@@ -64,6 +64,7 @@ def get_all_results_directories(rootdir:str):
 
 def store_results_csv(results: pd.DataFrame, results_directory: str = "results"):
     """Store results csv from given results directory.
+        results: pd.DataFrame, standard dataframe of results to store.
         results_directory: str = "results", directory where to store the results.
     """
     results.to_csv(results_path(results_directory), index=False)

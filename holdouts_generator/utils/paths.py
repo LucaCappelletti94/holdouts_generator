@@ -81,6 +81,14 @@ def results_path(results_directory: str)->str:
         results_directory=results_directory
     )
 
+def work_in_progress_path(results_directory: str)->str:
+    """Return default path for storing the main work in progress csv.
+        results_directory: str, directory where to store the prediction_labels.
+    """
+    return "{results_directory}/work_in_progress.csv".format(
+        results_directory=results_directory
+    )
+
 def predictions_labels_path(results_directory: str, predictions_labels: np.ndarray)->str:
     """Return default path for prediction labels.
         results_directory: str, directory where to store the prediction_labels.
