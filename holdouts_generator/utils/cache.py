@@ -47,6 +47,13 @@ def get_path_from_key(holdouts: pd.DataFrame, key: str) -> str:
     )["path"].values[0]
 
 
+def is_cache_directory(cache_dir: str) -> bool:
+    """Return boolean representing if given directory contains holdout caches.
+        cache_dir: str, directory to determine if contains caches.
+    """
+    return os.path.isfile(info_path(cache_dir))
+
+
 def is_valid_holdout_key(path: str, key: str) -> bool:
     """Return bool representing if given key is correct sign for given holdout's path.
         path:str, the holdout's path.
@@ -124,3 +131,22 @@ def delete_holdout_by_key(key: str, cache_dir: str = ".holdouts"):
     if os.path.exists(path):
         os.remove(path)
     store_cache(holdouts[holdouts.key != key], cache_dir)
+
+
+def get_all_cache_directories(rootdir: str):
+    """Return list of all result directories under rootdir, including rootdir if contains cache.
+        rootdir:str, directory from which to start.
+    """
+    return [
+        os.path.join(root, subdir)
+        for root, subdirs, files in os.walk(rootdir) for subdir in subdirs
+        if is_cache_directory(os.path.join(root, subdir))
+    ] + ([rootdir] if is_cache_directory(rootdir) else [])
+
+
+def delete_all_deprecated_cache(root_cache_dir: str):
+    """Delete the cache which do not map anymore to a valid holdout recursively.
+        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+    """
+    for results_directory in get_all_cache_directories(root_cache_dir):
+        delete_deprecated_cache(results_directory)
