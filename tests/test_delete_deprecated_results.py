@@ -7,7 +7,9 @@ import numpy as np
 def make_results():
     generator = cached_holdouts_generator(np.random.randint(100, size=(100,100)), holdouts=random_holdouts([0.1], [3]))
     for i, (_, key, _) in enumerate(generator()):
-        store_result(key, {"number":i}, 0)
+        store_result(key, {"number":i}, 0, {
+            "test":"testoni"
+        })
     return key
         
 def make_deprecated_results():

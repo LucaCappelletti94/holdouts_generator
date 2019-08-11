@@ -220,7 +220,7 @@ def merge_results(results_directories: List[str], target_results_directory: str)
             upd.values.flatten()
         ) if is_valid_path(source_path, results_directory)
     ]
-    with Pool(cpu_count()) as p:
+    with Pool(min(cpu_count(), len(jobs))) as p:
         list(tqdm(p.imap(copy_file_mkdir, jobs),
                   total=len(jobs), desc="Copying files"))
         p.close()

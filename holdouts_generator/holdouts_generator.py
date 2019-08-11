@@ -83,11 +83,3 @@ def clear_cache(cache_dir: str = ".holdouts"):
     """
     if os.path.exists(cache_dir):
         shutil.rmtree(cache_dir)
-
-
-def load_cache(cache_dir: str = ".holdouts"):
-    """Load the holdouts cache.
-        cache_dir:str=".holdouts", the holdouts cache directory.
-    """
-    if os.path.exists(cache_dir):
-        shutil.rmtree(cache_dir)
