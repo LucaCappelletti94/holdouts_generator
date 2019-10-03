@@ -1,8 +1,13 @@
-from holdouts_generator import random_holdouts, chromosomal_holdouts
+from holdouts_generator import random_holdouts, chromosomal_holdouts, balanced_random_holdouts
 from random import randint
 from .clear_all_cache import clear_all_cache
 
 example_random_holdouts = random_holdouts(
+    [0.1, 0.2, 0.3],
+    [2, 1, 1]
+)
+
+example_balanced_random_holdouts = balanced_random_holdouts(
     [0.1, 0.2, 0.3],
     [2, 1, 1]
 )

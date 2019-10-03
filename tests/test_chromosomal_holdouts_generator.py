@@ -8,19 +8,19 @@ def run_this_twice():
 	generator = holdouts_generator(x, x, holdouts=example_chromosomal_holdouts)
 	cached_generator = cached_holdouts_generator(x, x, holdouts=example_chromosomal_holdouts)
 	for ((train, test), inner), ((cached_train, cached_test), _, cached_inner) in zip(generator(), cached_generator()):
-		assert [
+		assert all([
 			np.all(t==ct) for t, ct in zip(train, cached_train)
-		]
-		assert [
+		])
+		assert all([
 			np.all(t==ct) for t, ct in zip(test, cached_test)
-		]
+		])
 		for ((inner_train, inner_test), _), ((inner_cached_train, inner_cached_test), _, _) in zip(inner(), cached_inner()):
-			assert [
+			assert all([
 				np.all(t==ct) for t, ct in zip(inner_train, inner_cached_train)
-			]
-			assert [
+			])
+			assert all([
 				np.all(t==ct) for t, ct in zip(inner_test, inner_cached_test)
-			]
+			])
 
 def test_chromosomal_holdouts_generator():
 	clear_all_cache()
