@@ -8,7 +8,7 @@ from keras import Model
 import shutil
 from json import dump
 import humanize
-from auto_tqdm import tqdm
+from tqdm.auto import tqdm
 from multiprocessing import cpu_count, Pool
 
 

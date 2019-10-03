@@ -1,6 +1,6 @@
 import os
 import shutil
-from auto_tqdm import tqdm
+from tqdm.auto import tqdm
 from typing import List, Callable, Dict, Generator
 from .utils import get_level_description, cached, uncached, get_holdout_key
 import gc
@@ -24,7 +24,7 @@ def _holdouts_generator(*dataset: List, holdouts: List, cacher: Callable, cache_
         return None
 
     def generator(hyper_parameters: Dict = None, results_directory: str = "results"):
-        for number, (outer, parameters, inner) in enumerate(tqdm(holdouts, verbose=verbose, desc=get_level_description(level))):
+        for number, (outer, parameters, inner) in enumerate(tqdm(holdouts, disable=not verbose, desc=get_level_description(level))):
             key = get_holdout_key(cache_dir, **parameters,
                                   level=level, number=number)
             if skip is not None and key is not None and skip(key, hyper_parameters, results_directory):

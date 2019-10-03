@@ -1,4 +1,4 @@
-from .utils import work_in_progress_path, build_query, work_in_progress_directory
+from .utils import work_in_progress_path, work_in_progress_directory
 import pandas as pd
 import os
 from typing import Dict

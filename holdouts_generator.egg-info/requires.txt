@@ -1,4 +1,4 @@
-auto_tqdm
+tqdm
 sklearn
 pandas
 dict_hash
