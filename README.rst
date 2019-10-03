@@ -40,7 +40,7 @@ Suppose you want to generate 3 layers of holdouts, respectively with 0.3, 0.2 an
                 #do what you need :)
 
 Generating balanced random holdouts
----------------------------------
+-------------------------------------------------------
 Suppose you want to generate 3 layers of holdouts, as above, but now you want to enforce to apply the same proportions for each class.
 In this setup, it is of foundamental importance to pass the list of classes as the last argument.
 
@@ -84,7 +84,7 @@ Suppose you want to generate 2 layers of holdouts, two outer ones with chromosom
 
 Generating cached holdouts
 ---------------------------------
-To generate a cached holdout you just need to import instead of `holdouts_generator` the other method called `cached_holdouts_generator`.
+To generate a cached holdout you just need to import instead of holdouts_generator the other method called cached_holdouts_generator.
 Everything else stays basically the same, except you receive also the holdout cached key for storing the results.
 
 .. code:: python
