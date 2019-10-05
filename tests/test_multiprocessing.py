@@ -1,4 +1,4 @@
-from holdouts_generator import random_holdouts, cached_holdouts_generator, add_work_in_progress, store_result, skip
+from holdouts_generator import random_holdouts, cached_holdouts_generator, add_work_in_progress, store_result, skip, regroup_results
 import numpy as np
 from .utils import clear_all_cache
 from multiprocessing import Pool, cpu_count
@@ -24,5 +24,4 @@ def test_work_in_progress():
         p.map(job_wrapper, generator())
         p.close()
         p.join()
-
     clear_all_cache()

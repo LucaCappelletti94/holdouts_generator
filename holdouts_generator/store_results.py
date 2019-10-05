@@ -6,6 +6,7 @@ from .utils import results_path, hyper_parameters_path, parameters_path, history
 from .utils import dump, load
 from .work_in_progress import remove_work_in_progress, is_work_in_progress
 from keras import Model
+from glob import glob
 import shutil
 import humanize
 
@@ -115,4 +116,8 @@ def regroup_results(results_directory: str = "results") -> pd.DataFrame:
     """Return regrouped results.
         results_directory: str = "results", directory where to store the results.
     """
-    # TODO
+    return pd.DataFrame([
+        load(path) for path in glob(
+            "{results_directory}/results/*.json".format(results_directory=results_directory)
+        ) if path.endswith(".json")
+    ])

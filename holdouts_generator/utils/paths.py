@@ -96,7 +96,7 @@ def results_path(results_directory: str, holdout_key: str, hyper_parameters: Dic
         holdouts_key:str, key that identifies the holdout used for training.
         hyper_parameters: Dict, hyperparameters used to train the model.
     """
-    return "{results_directory}/results/{key}".format(
+    return "{results_directory}/results/{key}.json".format(
         results_directory=results_directory,
         key=sha256({
             "holdout_key": holdout_key,
