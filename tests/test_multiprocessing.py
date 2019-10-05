@@ -24,4 +24,5 @@ def test_work_in_progress():
         p.map(job_wrapper, generator())
         p.close()
         p.join()
+    regroup_results()
     clear_all_cache()
