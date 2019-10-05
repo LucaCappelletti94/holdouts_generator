@@ -25,9 +25,10 @@ def _holdouts_generator(*dataset: List, holdouts: List, cacher: Callable, cache_
 
     def generator(hyper_parameters: Dict = None, results_directory: str = "results"):
         for number, (outer, parameters, inner) in enumerate(tqdm(holdouts, disable=not verbose, desc=get_level_description(level))):
-            key = get_holdout_key(cache_dir, **parameters,
-                                  level=level, number=number)
-            if skip is not None and key is not None and skip(key, hyper_parameters, results_directory):
+            if cache_dir:
+                key = get_holdout_key(cache_dir, **parameters,
+                                    level=level, number=number)
+            if cache_dir is not None and skip is not None and key is not None and skip(key, hyper_parameters, results_directory):
                 yield (None, None), key, empty_generator
             else:
                 gc.collect()
@@ -73,7 +74,6 @@ def cached_holdouts_generator(*dataset: List, holdouts: List, cache_dir: str = "
         skip:Callable[str, bool], the callback for choosing to load or not a given holdout.
         verbose:bool=True, wethever to show loading bars or not.
     """
-    os.makedirs(cache_dir, exist_ok=True)
     return _holdouts_generator(*dataset, holdouts=holdouts, cacher=cached, cache_dir=cache_dir, skip=skip, verbose=verbose)
 
 

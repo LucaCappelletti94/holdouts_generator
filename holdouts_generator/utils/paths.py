@@ -15,24 +15,25 @@ def mkdir(path_function: Callable) -> Callable:
 
 
 @mkdir
-def pickle_path(cache_directory: str, **hyper_parameters: Dict) -> str:
+def holdout_pickle_path(cache_directory: str, holdouts_parameters: Dict) -> str:
     """Return path where to pickle an holdout created with given parameters.
         cache_directory: str, directory where to store the holdouts cache.
-        hyper_parameters: Dict, hyper parameters used to create the holdouts.
+        holdouts_parameters: Dict, hyper parameters used to create the holdouts.
     """
     return "{results_directory}/holdouts/{hash}.pickle.gz".format(
         results_directory=cache_directory,
-        hash=sha256(hyper_parameters)
+        hash=sha256(holdouts_parameters)
     )
 
 
 @mkdir
-def info_path(cache_directory: str) -> str:
-    """Return path where to store the cache file, recording the created holdouts.
+def holdout_cache_path(cache_directory: str, holdouts_parameters: Dict) -> str:
+    """Return path where to store the cache file, recording the created holdout.
         cache_directory: str, directory where to store the holdouts cache.
     """
-    return "{cache_directory}/cache.csv".format(
-        cache_directory=cache_directory
+    return "{cache_directory}/cache/{holdouts_parameters}.json".format(
+        cache_directory=cache_directory,
+        holdouts_parameters=sha256(holdouts_parameters)
     )
 
 
@@ -79,24 +80,31 @@ def trained_model_path(results_directory: str, holdouts_key: str, hyper_paramete
         holdouts_key:str, key that identifies the holdout used for training.
         hyper_parameters: Dict, hyperparameters used to train the model.
     """
-    return "{results_directory}/trained_models/{holdouts_key}_{hyper_parameters}.h5".format(
+    return "{results_directory}/trained_models/{key}.h5".format(
         results_directory=results_directory,
-        holdouts_key=holdouts_key,
-        hyper_parameters=sha256(hyper_parameters)
+        key=sha256({
+            "hyper_parameters": hyper_parameters,
+            "holdouts_key": holdouts_key
+        })
     )
 
 
 @mkdir
-def results_path(results_directory: str) -> str:
+def results_path(results_directory: str, holdout_key: str, hyper_parameters: Dict) -> str:
     """Return default path for storing the main results csv.
         results_directory: str, directory where to store the prediction_labels.
+        holdouts_key:str, key that identifies the holdout used for training.
+        hyper_parameters: Dict, hyperparameters used to train the model.
     """
-    return "{results_directory}/results.csv".format(
-        results_directory=results_directory
+    return "{results_directory}/results/{key}".format(
+        results_directory=results_directory,
+        key=sha256({
+            "holdout_key": holdout_key,
+            "hyper_parameters": hyper_parameters
+        })
     )
 
 
-@mkdir
 def work_in_progress_directory(results_directory: str) -> str:
     """Return default path for storing work in progress temporary files.
         results_directory: str, directory where to store the prediction_labels.
@@ -105,16 +113,18 @@ def work_in_progress_directory(results_directory: str) -> str:
         results_directory=results_directory
     )
 
+
 @mkdir
 def work_in_progress_path(results_directory: str, holdouts_key: str, hyper_parameters: str = None) -> str:
     """Return default path for storing the main work in progress csv.
         results_directory: str, directory where to store the prediction_labels.
     """
-    return "{wip}/{holdouts_key}_{hyper_parameters}".format(
+    return "{wip}/{key}".format(
         wip=work_in_progress_directory(results_directory),
-        holdouts_key=holdouts_key,
-        hyper_parameters=sha256(
-            {} if hyper_parameters is None else hyper_parameters)
+        key=sha256({
+            "hyper_parameters": hyper_parameters,
+            "holdouts_key": holdouts_key
+        })
     )
 
 

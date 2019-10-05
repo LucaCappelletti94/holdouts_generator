@@ -1,4 +1,4 @@
-from holdouts_generator import cached_holdouts_generator, skip, store_keras_result, load_result
+from holdouts_generator import cached_holdouts_generator, skip, store_keras_result, load_result, add_work_in_progress
 from typing import Tuple, Dict
 from keras.datasets import boston_housing
 from .utils import example_random_holdouts, clear_all_cache
@@ -58,6 +58,9 @@ def test_keras_cache():
             pass
 
     for (training, testing), outer_key, inner in generator(hyper_parameters):
+        with pytest.raises(ValueError):
+            load_result(outer_key, hyper_parameters)
+        add_work_in_progress(outer_key, hyper_parameters)
         for (inner_training, inner_testing), inner_key, _ in inner(hyper_parameters):
             store_keras_result(inner_key, **train(inner_training, inner_testing, hyper_parameters))
             with pytest.raises(ValueError):
