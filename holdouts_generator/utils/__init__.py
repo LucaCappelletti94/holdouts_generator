@@ -5,4 +5,4 @@ from .json import load, dump
 
 __all__ = ["get_level_description", "cached", "uncached", "get_holdout_key", "load", "dump",
            "hyper_parameters_path", "results_path", "history_path", "trained_model_path",
-           "predictions_labels_path", "true_labels_path", "build_keys", "parameters_path", "is_valid_holdout_key", "work_in_progress_path", "work_in_progress_directory"]
+           "predictions_labels_path", "true_labels_path", "parameters_path", "is_valid_holdout_key", "work_in_progress_path", "work_in_progress_directory"]

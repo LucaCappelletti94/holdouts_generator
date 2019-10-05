@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 
 def odd_even_split(data:List)->Tuple[List, List]:
     """Return given list split into even and odds elements.

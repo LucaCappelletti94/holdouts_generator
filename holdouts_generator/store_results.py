@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List
 import os
 import pandas as pd
 import numpy as np
@@ -8,8 +8,6 @@ from .work_in_progress import remove_work_in_progress, is_work_in_progress
 from keras import Model
 import shutil
 import humanize
-from tqdm.auto import tqdm
-from multiprocessing import cpu_count, Pool
 
 
 def store_result(key: str, new_results: Dict, time: int, hyper_parameters: Dict = None, parameters: Dict = None, results_directory: str = "results"):

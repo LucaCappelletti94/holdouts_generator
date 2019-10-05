@@ -3,8 +3,6 @@ from .paths import holdout_pickle_path, holdout_cache_path
 from .various import odd_even_split
 from .hash import hash_file
 from .json import load, dump
-import os
-import pandas as pd
 import zlib
 import pickle
 import compress_pickle
