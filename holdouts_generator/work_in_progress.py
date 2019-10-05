@@ -1,5 +1,4 @@
 from .utils import work_in_progress_path, work_in_progress_directory, results_path
-import pandas as pd
 import os
 from typing import Dict
 from touch import touch

@@ -1,9 +1,9 @@
-from typing import Dict, List
+from typing import Dict
 import os
 import pandas as pd
 import numpy as np
 from .utils import results_path, hyper_parameters_path, parameters_path, history_path, trained_model_path, true_labels_path, predictions_labels_path
-from .utils import is_valid_holdout_key, dump, load
+from .utils import dump, load
 from .work_in_progress import remove_work_in_progress, is_work_in_progress
 from keras import Model
 import shutil
