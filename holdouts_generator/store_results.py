@@ -82,7 +82,7 @@ def store_keras_result(key: str, history: Dict, x_test: np.ndarray, y_test_true:
         results_directory: str = "results", directory where to store the results.
     """
     y_pred = model.predict(x_test)
-    hpath = history_path(results_directory, history)
+    hpath = history_path(results_directory, key, hyper_parameters)
     mpath = trained_model_path(results_directory, key, hyper_parameters)
     plpath = predictions_labels_path(results_directory, y_pred)
     tlpath = true_labels_path(results_directory, y_test_true)
