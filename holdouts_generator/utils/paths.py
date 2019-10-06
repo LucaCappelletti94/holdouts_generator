@@ -62,14 +62,18 @@ def parameters_path(results_directory: str, parameters: Dict) -> str:
 
 
 @mkdir
-def history_path(results_directory: str, history: Dict) -> str:
+def history_path(results_directory: str, holdouts_key: str, hyper_parameters: Dict) -> str:
     """Return path where to store metrics tracked during history.
         results_directory: str, directory where to store the prediction_labels.
-        history: Dict, training history.
+        holdouts_key:str, key that identifies the holdout used for training.
+        hyper_parameters: Dict, hyperparameters used to train the model.
     """
-    return "{results_directory}/histories/{history_key}.csv".format(
+    return "{results_directory}/histories/{key}.h5".format(
         results_directory=results_directory,
-        history_key=sha256(history)
+        key=sha256({
+            "hyper_parameters": hyper_parameters,
+            "holdouts_key": holdouts_key
+        })
     )
 
 
