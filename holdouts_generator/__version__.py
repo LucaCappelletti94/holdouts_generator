@@ -1,2 +1,2 @@
 """Current version of package holdouts_generator"""
-__version__ = "0.0.37"
+__version__ = "0.0.38"

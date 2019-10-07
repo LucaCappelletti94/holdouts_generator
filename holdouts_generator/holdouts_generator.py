@@ -37,15 +37,16 @@ def _holdouts_generator(*dataset: List, holdouts: List, cacher: Callable, cache_
                 gc.collect()
                 if train is None:
                     yield (None, None), key, empty_generator
-                yield (train, test), key, _holdouts_generator(
-                    *train,
-                    holdouts=inner,
-                    cacher=cacher,
-                    cache_dir=cache_dir,
-                    skip=skip,
-                    level=level+1,
-                    verbose=verbose
-                )
+                else:
+                    yield (train, test), key, _holdouts_generator(
+                        *train,
+                        holdouts=inner,
+                        cacher=cacher,
+                        cache_dir=cache_dir,
+                        skip=skip,
+                        level=level+1,
+                        verbose=verbose
+                    )
     return generator
 
 
