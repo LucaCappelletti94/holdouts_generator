@@ -3,9 +3,12 @@ from .paths import holdout_pickle_path, holdout_cache_path
 from .various import odd_even_split
 from .hash import hash_file
 from .json import load, dump
+from glob import glob
+import shutil
 import zlib
 import pickle
 import compress_pickle
+import os
 
 
 def uncached(generator: Callable, dataset: List, *args, **kwargs):
@@ -20,11 +23,17 @@ def cached(generator: Callable, dataset: List, cache_dir: str, **parameters: Dic
             raise ValueError("Holdout has been tempered with!")
         return compress_pickle.load(path), key
     except (pickle.PickleError, FileNotFoundError, AttributeError,  EOFError, ImportError, IndexError, zlib.error):
-        data = odd_even_split(generator(dataset))
+        pass
+    data = odd_even_split(generator(dataset))
+    if os.path.exists(path):
+        # In case two competing processes tried to create the same holdout.
+        # It can happen only when the generation of the holdout requires a great
+        # deal of time.
+        return (None, None), key
     compress_pickle.dump(data, path)
     key = hash_file(path)
     store_cache(path, key, parameters, cache_dir)
-    return (data, key)
+    return data, key
 
 
 def is_valid_holdout_key(path: str, key: str) -> bool:
@@ -67,3 +76,23 @@ def store_cache(path: str, key: str, holdout_parameters: Dict, cache_dir: str):
         },
         holdout_cache_path(cache_dir, holdout_parameters)
     )
+
+
+def clear_invalid_cache(cache_dir: str = ".holdouts"):
+    """Remove the holdouts that do not map to a valid cache.
+        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+    """
+    for cache_path in glob("{cache_dir}/cache/*.json".format(cache_dir=cache_dir)):
+        cache = load(cache_path)
+        if not is_valid_holdout_key(cache["path"], cache["key"]):
+            if os.path.exists(cache["path"]):
+                os.remove(cache["path"])
+            os.remove(cache_path)
+
+
+def clear_cache(cache_dir: str = ".holdouts"):
+    """Remove the holdouts cache directory.
+        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+    """
+    if os.path.exists(cache_dir):
+        shutil.rmtree(cache_dir)

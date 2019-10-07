@@ -75,11 +75,3 @@ def cached_holdouts_generator(*dataset: List, holdouts: List, cache_dir: str = "
         verbose:bool=True, wethever to show loading bars or not.
     """
     return _holdouts_generator(*dataset, holdouts=holdouts, cacher=cached, cache_dir=cache_dir, skip=skip, verbose=verbose)
-
-
-def clear_cache(cache_dir: str = ".holdouts"):
-    """Remove the holdouts cache directory.
-        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
-    """
-    if os.path.exists(cache_dir):
-        shutil.rmtree(cache_dir)
