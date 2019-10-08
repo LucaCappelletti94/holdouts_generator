@@ -76,7 +76,7 @@ def load_result(holdout_key: str, hyper_parameters: Dict = None, results_directo
     return load(path)
 
 
-def store_keras_result(holdout_key: str, history: Dict, x_test: np.ndarray, y_test_true: np.ndarray, model: Model, time: int, informations: Dict = None, hyper_parameters: Dict = None, parameters: Dict = None, save_model: bool = True, results_directory: str = "results"):
+def store_keras_result(holdout_key: str, history: Dict, x_test: np.ndarray, y_test_true: np.ndarray, model: Model, time: int, informations: Dict = None, hyper_parameters: Dict = None, parameters: Dict = None, save_model: bool = True, results_directory: str = "results", cache_dir:str=".holdouts"):
     """Store given keras model results in a standard way, so that the skip function can use them.
         holdout_key: str, holdout_key identifier of holdout to be skipped.
         history: Dict, training history to store.
@@ -87,6 +87,7 @@ def store_keras_result(holdout_key: str, history: Dict, x_test: np.ndarray, y_te
         parameters: Dict, parameters used for tuning the model.
         save_model:bool=True, whetever to save or not the model.
         results_directory: str = "results", directory where to store the results.
+        cache_dir:str=".holdouts", the holdouts cache directory.
     """
     y_pred = model.predict(x_test)
     hpath = history_path(results_directory, holdout_key, hyper_parameters)
