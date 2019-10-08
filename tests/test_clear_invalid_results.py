@@ -11,7 +11,7 @@ def test_clear_invalid_results():
     generator = cached_holdouts_generator(np.random.randint(100, size=(100,100)), holdouts=random_holdouts([0.1], [1]))
     gen = generator()
     (_, _), key, _ = next(gen)
-    store_result(key, {"ping":"pong"}, 0)
+    store_result(key, {"ping":"pong"}, 0, hyper_parameters={"keb":"ab"})
     assert len(glob("results/results/*.json")) == 1
     clear_invalid_results()
     assert len(glob("results/results/*.json")) == 1

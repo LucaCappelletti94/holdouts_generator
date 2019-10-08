@@ -117,8 +117,11 @@ def clear_invalid_results(results_directory: str = "results", cache_dir: str = "
     """
     cache = load_valid_cache(cache_dir)
     for result_path in glob("{results_directory}/results/*.json".format(results_directory=results_directory)):
-        key = load(result_path)["holdouts_key"]
-        if cache.empty or not cache.key.isin([key]).any():
+        result = load(result_path)
+        if cache.empty or not cache.key.isin([result["holdouts_key"]]).any():
+            for key, path in result.items():
+                if key.endswith("_path") and path is not None:
+                    os.remove(path)
             os.remove(result_path)
 
 
