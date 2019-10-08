@@ -104,7 +104,7 @@ def store_keras_result(holdout_key: str, history: Dict, x_test: np.ndarray, y_te
         "model_path": mpath if save_model else None,
         "predictions_labels_path": plpath,
         "true_labels_path": tlpath
-    }, time, hyper_parameters, parameters, results_directory)
+    }, time, hyper_parameters, parameters, results_directory, cache_dir)
     dfh.to_csv(hpath, index=False)
     pd.DataFrame(y_pred).to_csv(plpath, index=False)
     pd.DataFrame(y_test_true).to_csv(tlpath, index=False)
