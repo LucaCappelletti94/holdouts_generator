@@ -19,10 +19,10 @@ def uncached(generator: Callable, dataset: List, *args, **kwargs):
 def cached(generator: Callable, dataset: List, cache_dir: str, **parameters: Dict):
     path = holdout_pickle_path(cache_dir, parameters)
     try:
-        key = get_holdout_key(cache_dir, **parameters)
-        if key is not None and not is_valid_holdout_key(path, key):
+        holdout_key = get_holdout_key(cache_dir, **parameters)
+        if holdout_key is not None and not is_valid_holdout_key(path, holdout_key):
             raise ValueError("Holdout has been tempered with!")
-        return compress_pickle.load(path), key
+        return compress_pickle.load(path), holdout_key
     except (pickle.PickleError, FileNotFoundError, AttributeError,  EOFError, ImportError, IndexError, zlib.error):
         pass
     data = odd_even_split(generator(dataset))
@@ -30,35 +30,35 @@ def cached(generator: Callable, dataset: List, cache_dir: str, **parameters: Dic
         # In case two competing processes tried to create the same holdout.
         # It can happen only when the generation of the holdout requires a great
         # deal of time.
-        return (None, None), key
+        return (None, None), holdout_key
     compress_pickle.dump(data, path)
-    key = hash_file(path)
-    store_cache(path, key, parameters, cache_dir)
-    return data, key
+    holdout_key = hash_file(path)
+    store_cache(path, holdout_key, parameters, cache_dir)
+    return data, holdout_key
 
 
-def is_valid_holdout_key(path: str, key: str) -> bool:
-    """Return bool representing if given key is correct sign for given holdout's path.
+def is_valid_holdout_key(path: str, holdout_key: str) -> bool:
+    """Return bool representing if given holdout_key is correct sign for given holdout's path.
         path:str, the holdout's path.
-        key:str, the holdout's key.
+        holdout_key:str, the holdout's holdout_key.
     """
     try:
-        return hash_file(path) == key
+        return hash_file(path) == holdout_key
     except FileNotFoundError:
         return False
 
 
-def can_save_result_to_holdout_key(key: str, cache_dir:str=".holdouts") -> bool:
-    """Return bool representing if given key is correct sign for any given holdout.
-        key:str, the holdout's key.
+def can_save_result_to_holdout_key(holdout_key: str, cache_dir: str = ".holdouts") -> bool:
+    """Return bool representing if given holdout_key is correct sign for any given holdout.
+        holdout_key:str, the holdout's holdout_key.
         cache_dir:str=".holdouts", the holdouts cache directory.
     """
     cache = load_valid_cache(cache_dir)
-    return not cache.empty and cache.key.isin([key]).any()
+    return not cache.empty and cache.holdout_key.isin([holdout_key]).any()
 
 
 def get_holdout_key(cache_dir: str, **holdout_parameters: Dict) -> str:
-    """Return key, if cached, for given holdout else return None.
+    """Return holdout_key, if cached, for given holdout else return None.
         cache_dir:str, cache directory to load data from
         holdout_parameters:Dict, parameters used to generated the holdout.
     """
@@ -66,22 +66,22 @@ def get_holdout_key(cache_dir: str, **holdout_parameters: Dict) -> str:
         return load(holdout_cache_path(
             cache_dir,
             holdout_parameters
-        ))["key"]
+        ))["holdout_key"]
     except (FileNotFoundError, IndexError):
         return None
 
 
-def store_cache(path: str, key: str, holdout_parameters: Dict, cache_dir: str):
+def store_cache(path: str, holdout_key: str, holdout_parameters: Dict, cache_dir: str):
     """Store the holdouts cache.
         path:str, the considered holdout path.
-        key:str, the holdout key.
+        holdout_key:str, the holdout holdout_key.
         holdout_parameters:Dict, dictionary of parameters used to generate holdout.
         cache_dir:str=".holdouts", the holdouts cache directory.
     """
     dump(
         {
             "path": path,
-            "key": key,
+            "holdout_key": holdout_key,
             "parameters": holdout_parameters
         },
         holdout_cache_path(cache_dir, holdout_parameters)
@@ -94,7 +94,7 @@ def clear_invalid_cache(cache_dir: str = ".holdouts"):
     """
     for cache_path in glob("{cache_dir}/cache/*.json".format(cache_dir=cache_dir)):
         cache = load(cache_path)
-        if not is_valid_holdout_key(cache["path"], cache["key"]):
+        if not is_valid_holdout_key(cache["path"], cache["holdout_key"]):
             if os.path.exists(cache["path"]):
                 os.remove(cache["path"])
             os.remove(cache_path)
@@ -118,9 +118,9 @@ def clear_invalid_results(results_directory: str = "results", cache_dir: str = "
     cache = load_valid_cache(cache_dir)
     for result_path in glob("{results_directory}/results/*.json".format(results_directory=results_directory)):
         result = load(result_path)
-        if cache.empty or not cache.key.isin([result["holdouts_key"]]).any():
-            for key, path in result.items():
-                if key.endswith("_path") and path is not None:
+        if cache.empty or not cache.holdout_key.isin([result["holdouts_holdout_key"]]).any():
+            for holdout_key, path in result.items():
+                if holdout_key.endswith("_path") and path is not None and os.path.exists(path):
                     os.remove(path)
             os.remove(result_path)
 
