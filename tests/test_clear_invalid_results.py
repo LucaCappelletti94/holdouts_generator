@@ -17,8 +17,9 @@ def test_clear_invalid_results():
     path = glob(".holdouts/holdouts/*.pickle.gz")[0]
     os.remove(path)
     with pytest.raises(ValueError):
-        next(generator())
-        next(generator())
+        gen = generator()
+        next(gen)
+        next(gen)
     clear_invalid_results()
     clear_all_cache()
     
