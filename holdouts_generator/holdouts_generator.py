@@ -48,13 +48,13 @@ def _holdouts_generator(*dataset: List, holdouts: List, cacher: Callable, cache_
     return generator
 
 
-def remove_key(generator: Generator):
+def _remove_key(generator: Generator):
     if generator is None:
         return None
 
     def filtered(hyper_parameters: Dict = None, results_directory: str = "results"):
         for values, _, inner in generator(hyper_parameters, results_directory):
-            yield values, remove_key(inner)
+            yield values, _remove_key(inner)
     return filtered
 
 
@@ -64,14 +64,14 @@ def holdouts_generator(*dataset: List, holdouts: List, verbose: bool = True):
         holdouts:List, list of holdouts callbacks.
         verbose:bool=True, wethever to show loading bars or not.
     """
-    return remove_key(_holdouts_generator(*dataset, holdouts=holdouts, cacher=uncached, verbose=verbose))
+    return _remove_key(_holdouts_generator(*dataset, holdouts=holdouts, cacher=uncached, verbose=verbose))
 
 
-def cached_holdouts_generator(*dataset: List, holdouts: List, cache_dir: str = ".holdouts", skip: Callable[[str, Dict, str], bool] = None, verbose: bool = True):
+def cached_holdouts_generator(*dataset: List, holdouts: List, cache_dir:str, skip: Callable[[str, Dict, str], bool] = None, verbose: bool = True):
     """Return validation dataset, its key and another holdout generator
         dataset, iterable of datasets to generate holdouts from.
         holdouts:List, list of holdouts callbacks.
-        cache_dir:str=".holdouts", the holdouts cache directory.
+        cache_dir:str, the holdouts cache directory.
         skip:Callable[str, bool], the callback for choosing to load or not a given holdout.
         verbose:bool=True, wethever to show loading bars or not.
     """

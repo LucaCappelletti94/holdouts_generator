@@ -12,14 +12,23 @@ import shutil
 import humanize
 
 
-def store_result(holdout_key: str, new_results: Dict, time: int, hyper_parameters: Dict = None, parameters: Dict = None, results_directory: str = "results", cache_dir:str=".holdouts"):
+def store_result(
+    holdout_key: str,
+    new_results: Dict,
+    time: int,
+    results_directory: str,
+    cache_dir:str,
+    hyper_parameters: Dict = None,
+    parameters: Dict = None
+):
     """Store given results in a standard way, so that the skip function can use them.
         holdout_key: str, holdout_key identifier of holdout to be skipped.
         new_results: Dict, results to store.
+        time: int, time required for given result.
+        results_directory: str, directory where to store the results.
+        cache_dir:str, the holdouts cache directory.
         hyper_parameters: Dict, hyper parameters to check for.
         parameters: Dict, parameters used for tuning the model.
-        results_directory: str = "results", directory where to store the results.
-        cache_dir:str=".holdouts", the holdouts cache directory.
     """
     path = results_path(
         results_directory,
@@ -53,15 +62,20 @@ def store_result(holdout_key: str, new_results: Dict, time: int, hyper_parameter
         dump(hyper_parameters, hppath)
     if parameters is not None:
         dump(parameters, ppath)
-    if is_work_in_progress(holdout_key, hyper_parameters, results_directory):
+    if is_work_in_progress(results_directory, holdout_key, hyper_parameters):
         remove_work_in_progress(
+            results_directory,
             holdout_key,
             hyper_parameters=hyper_parameters,
-            results_directory=results_directory
         )
 
 
-def load_result(holdout_key: str, hyper_parameters: Dict = None, results_directory: str = "results"):
+def load_result(results_directory: str, holdout_key: str, hyper_parameters: Dict = None):
+    """Return the result corresponding to given holdout_key and hyper_parameters in given results_directory.
+        results_directory: str, directory where to store the results.
+        holdout_key: str, holdout_key identifier of holdout to be skipped.
+        hyper_parameters: Dict, hyper parameters to check for.
+    """
     path = results_path(
         results_directory,
         holdout_key,
@@ -76,18 +90,32 @@ def load_result(holdout_key: str, hyper_parameters: Dict = None, results_directo
     return load(path)
 
 
-def store_keras_result(holdout_key: str, history: Dict, x_test: np.ndarray, y_test_true: np.ndarray, model: Model, time: int, informations: Dict = None, hyper_parameters: Dict = None, parameters: Dict = None, save_model: bool = True, results_directory: str = "results", cache_dir:str=".holdouts"):
+def store_keras_result(
+    holdout_key: str,
+    history: Dict,
+    x_test: np.ndarray,
+    y_test_true: np.ndarray,
+    model: Model,
+    time: int,
+    results_directory: str,
+    cache_dir:str,
+    informations: Dict = None,
+    hyper_parameters: Dict = None,
+    parameters: Dict = None,
+    save_model: bool = True
+):
     """Store given keras model results in a standard way, so that the skip function can use them.
         holdout_key: str, holdout_key identifier of holdout to be skipped.
         history: Dict, training history to store.
         x_test:np.ndarray, input test values for the model.
         y_test_true:np.ndarray, true output test values.
         model:Model, model to save if save_model is True, used to predict the value.
+        time: int, time required for given result.
+        results_directory: str, directory where to store the results.
+        cache_dir:str, the holdouts cache directory.
         hyper_parameters: Dict, hyper parameters to check for.
         parameters: Dict, parameters used for tuning the model.
         save_model:bool=True, whetever to save or not the model.
-        results_directory: str = "results", directory where to store the results.
-        cache_dir:str=".holdouts", the holdouts cache directory.
     """
     y_pred = model.predict(x_test)
     hpath = history_path(results_directory, holdout_key, hyper_parameters)
@@ -104,7 +132,7 @@ def store_keras_result(holdout_key: str, history: Dict, x_test: np.ndarray, y_te
         "model_path": mpath if save_model else None,
         "predictions_labels_path": plpath,
         "true_labels_path": tlpath
-    }, time, hyper_parameters, parameters, results_directory, cache_dir)
+    }, time, results_directory, cache_dir, hyper_parameters, parameters)
     dfh.to_csv(hpath, index=False)
     pd.DataFrame(y_pred).to_csv(plpath, index=False)
     pd.DataFrame(y_test_true).to_csv(tlpath, index=False)
@@ -112,17 +140,17 @@ def store_keras_result(holdout_key: str, history: Dict, x_test: np.ndarray, y_te
         model.save(mpath)
 
 
-def delete_results(results_directory: str = "results"):
+def delete_results(results_directory: str):
     """Delete the results stored in a given directory.
-        results_directory: str = "results", directory where results are stores.
+        results_directory: str, directory where results are stores.
     """
     if os.path.exists(results_directory):
         shutil.rmtree(results_directory)
 
 
-def regroup_results(results_directory: str = "results") -> pd.DataFrame:
+def regroup_results(results_directory: str) -> pd.DataFrame:
     """Return regrouped results.
-        results_directory: str = "results", directory where to store the results.
+        results_directory: str, directory where to store the results.
     """
     return pd.DataFrame([
         load(path) for path in glob(

@@ -6,23 +6,27 @@ from multiprocessing import Pool, cpu_count
 
 def job(data, key):
     if data[0] is not None:
-        add_work_in_progress(key)
-        store_result(key, {"ciao": 1}, 0)
+        add_work_in_progress("results", key)
+        store_result(key, {"ciao": 1}, 0, "results", "holdouts")
 
 
 def job_wrapper(task):
     job(*task[:2])
 
 
-def test_work_in_progress():
-    clear_all_cache()
-    generator = cached_holdouts_generator(np.random.randint(
-        100, size=(100, 100)), skip=skip, holdouts=random_holdouts([0.1], [24]))
+def test_multiprocessing():
+    clear_all_cache(results_directory="results", cache_dir="holdouts")
+    generator = cached_holdouts_generator(
+        np.random.randint(100, size=(100, 100)),
+        holdouts=random_holdouts([0.1], [24]),
+        cache_dir="holdouts",
+        skip=skip
+    )
 
     with Pool(cpu_count()) as p:
         p.map(job_wrapper, generator())
         p.map(job_wrapper, generator())
         p.close()
         p.join()
-    regroup_results()
-    clear_all_cache()
+    regroup_results(results_directory="results")
+    clear_all_cache(results_directory="results", cache_dir="holdouts")

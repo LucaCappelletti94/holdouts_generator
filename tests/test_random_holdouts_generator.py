@@ -6,7 +6,7 @@ from .utils import example_random_holdouts, clear_all_cache
 def run_this_twice():
     x = np.random.RandomState(seed=42).randint(10, size=(100))
     generator = holdouts_generator(x, x, holdouts=example_random_holdouts, verbose=False)
-    cached_generator = cached_holdouts_generator(x, x, holdouts=example_random_holdouts)
+    cached_generator = cached_holdouts_generator(x, x, holdouts=example_random_holdouts, cache_dir="holdouts")
     for ((train, test), inner), ((cached_train, cached_test), _, cached_inner) in zip(generator(), cached_generator()):
         assert all([
             np.all(t==ct) for t, ct in zip(train, cached_train)
@@ -31,7 +31,7 @@ def run_this_twice():
 
 
 def test_random_holdouts_generator():
-    clear_all_cache()
+    clear_all_cache(results_directory="results", cache_dir="holdouts")
     run_this_twice()
     run_this_twice()
-    clear_all_cache()
+    clear_all_cache(results_directory="results", cache_dir="holdouts")

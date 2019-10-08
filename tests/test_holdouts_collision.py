@@ -8,7 +8,7 @@ import random
 
 def job(X):
     sleep(random.random())
-    list(cached_holdouts_generator(X, skip=skip, holdouts=slow_random_holdouts([0.1, 0.1], [cpu_count(), 1]))())
+    list(cached_holdouts_generator(X, skip=skip, holdouts=slow_random_holdouts([0.1, 0.1], [cpu_count(), 1]), cache_dir="holdouts")())
 
 
 def test_work_in_progress():

@@ -38,17 +38,19 @@ def train(training: Tuple, testing: Tuple, hyper_parameters: Dict):
         "y_test_true": testing[1],
         "model": model,
         "time": time.time() - start,
+        "cache_dir":"holdouts",
+        "results_directory":"results",
         "hyper_parameters": hyper_parameters,
         "parameters": parameters
     }
 
 
 def test_keras_cache():
-    clear_all_cache()
+    clear_all_cache(results_directory="results", cache_dir="holdouts")
 
     (x_train, y_train), _ = boston_housing.load_data()
     generator = cached_holdouts_generator(
-        x_train, y_train, holdouts=example_random_holdouts, skip=skip)
+        x_train, y_train, holdouts=example_random_holdouts, cache_dir="holdouts", skip=skip)
     hyper_parameters = {
         "epochs": 1
     }
@@ -59,8 +61,8 @@ def test_keras_cache():
 
     for (training, testing), outer_key, inner in generator(hyper_parameters):
         with pytest.raises(ValueError):
-            load_result(outer_key, hyper_parameters)
-        add_work_in_progress(outer_key, hyper_parameters)
+            load_result("results", outer_key, hyper_parameters)
+        add_work_in_progress("results", outer_key, hyper_parameters)
         for (inner_training, inner_testing), inner_key, _ in inner(hyper_parameters):
             store_keras_result(inner_key, **train(inner_training, inner_testing, hyper_parameters))
             with pytest.raises(ValueError):
@@ -71,6 +73,6 @@ def test_keras_cache():
         assert training is None
         assert testing is None
         assert not inner()
-        load_result(outer_key, hyper_parameters)
+        load_result("results", outer_key, hyper_parameters)
 
-    clear_all_cache()
+    clear_all_cache(results_directory="results", cache_dir="holdouts")

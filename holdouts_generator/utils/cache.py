@@ -48,10 +48,10 @@ def is_valid_holdout_key(path: str, holdout_key: str) -> bool:
         return False
 
 
-def can_save_result_to_holdout_key(holdout_key: str, cache_dir: str = ".holdouts") -> bool:
+def can_save_result_to_holdout_key(holdout_key: str, cache_dir: str) -> bool:
     """Return bool representing if given holdout_key is correct sign for any given holdout.
         holdout_key:str, the holdout's holdout_key.
-        cache_dir:str=".holdouts", the holdouts cache directory.
+        cache_dir:str, the holdouts cache directory.
     """
     cache = load_valid_cache(cache_dir)
     return not cache.empty and cache.holdout_key.isin([holdout_key]).any()
@@ -76,7 +76,7 @@ def store_cache(path: str, holdout_key: str, holdout_parameters: Dict, cache_dir
         path:str, the considered holdout path.
         holdout_key:str, the holdout holdout_key.
         holdout_parameters:Dict, dictionary of parameters used to generate holdout.
-        cache_dir:str=".holdouts", the holdouts cache directory.
+        cache_dir:str, the holdouts cache directory.
     """
     dump(
         {
@@ -88,9 +88,9 @@ def store_cache(path: str, holdout_key: str, holdout_parameters: Dict, cache_dir
     )
 
 
-def clear_invalid_cache(cache_dir: str = ".holdouts"):
+def clear_invalid_cache(cache_dir: str):
     """Remove the holdouts that do not map to a valid cache.
-        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+        cache_dir:str, the holdouts cache directory to be removed.
     """
     for cache_path in glob("{cache_dir}/cache/*.json".format(cache_dir=cache_dir)):
         cache = load(cache_path)
@@ -100,9 +100,9 @@ def clear_invalid_cache(cache_dir: str = ".holdouts"):
             os.remove(cache_path)
 
 
-def load_valid_cache(cache_dir: str = ".holdouts") -> pd.DataFrame:
+def load_valid_cache(cache_dir: str) -> pd.DataFrame:
     """Remove the holdouts that do not map to a valid cache and return valid cache dataframe.
-        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+        cache_dir:str, the holdouts cache directory to be removed.
     """
     clear_invalid_cache(cache_dir)
     return pd.DataFrame([
@@ -110,10 +110,10 @@ def load_valid_cache(cache_dir: str = ".holdouts") -> pd.DataFrame:
     ])
 
 
-def clear_invalid_results(results_directory: str = "results", cache_dir: str = ".holdouts"):
+def clear_invalid_results(results_directory: str, cache_dir: str):
     """Remove the results that do not map to a valid holdout cache.
-        results_directory: str = "results", directory where results are stores.
-        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+        results_directory: str, directory where results are stores.
+        cache_dir:str, the holdouts cache directory to be removed.
     """
     cache = load_valid_cache(cache_dir)
     for result_path in glob("{results_directory}/results/*.json".format(results_directory=results_directory)):
@@ -125,9 +125,9 @@ def clear_invalid_results(results_directory: str = "results", cache_dir: str = "
             os.remove(result_path)
 
 
-def clear_cache(cache_dir: str = ".holdouts"):
+def clear_cache(cache_dir: str):
     """Remove the holdouts cache directory.
-        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+        cache_dir:str, the holdouts cache directory to be removed.
     """
     if os.path.exists(cache_dir):
         shutil.rmtree(cache_dir)
