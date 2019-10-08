@@ -1,4 +1,4 @@
-from holdouts_generator import random_holdouts, cached_holdouts_generator, skip
+from holdouts_generator import cached_holdouts_generator, skip
 import numpy as np
 from .utils import clear_all_cache, slow_random_holdouts
 from multiprocessing import Pool, cpu_count
