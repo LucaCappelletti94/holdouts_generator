@@ -1,8 +1,7 @@
-from holdouts_generator import random_holdouts, cached_holdouts_generator, clear_invalid_cache, store_result, clear_invalid_results
+from holdouts_generator import random_holdouts, cached_holdouts_generator, store_result, clear_invalid_results
 from glob import glob
 import os
 from .utils import clear_all_cache
-from touch import touch
 import numpy as np
 import pytest
 
