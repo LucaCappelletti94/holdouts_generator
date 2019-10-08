@@ -5,7 +5,7 @@ from .utils import clear_all_cache
 import numpy as np
 import pytest
 
-def test_holdouts_tempered():
+def test_clear_invalid_results():
     clear_all_cache()
     np.random.seed(10)
     generator = cached_holdouts_generator(np.random.randint(100, size=(100,100)), holdouts=random_holdouts([0.1], [2]))
@@ -17,6 +17,7 @@ def test_holdouts_tempered():
     path = glob(".holdouts/holdouts/*.pickle.gz")[0]
     os.remove(path)
     with pytest.raises(ValueError):
+        next(generator())
         next(generator())
     clear_invalid_results()
     clear_all_cache()
