@@ -12,13 +12,16 @@ def test_clear_invalid_results():
     gen = generator()
     (_, _), key, _ = next(gen)
     store_result(key, {"ping":"pong"}, 0)
+    assert len(glob("results/results/*.json")) == 1
     clear_invalid_results()
+    assert len(glob("results/results/*.json")) == 1
     path = glob(".holdouts/holdouts/*.pickle.gz")[0]
     os.remove(path)
     with pytest.raises(ValueError):
         list(generator())
+    clear_invalid_results()
     with pytest.raises(ValueError):
         store_result(key, {"ping":"pong"}, 0)
-    clear_invalid_results()
+    assert len(glob("results/results/*.json")) == 0
     clear_all_cache()
     
