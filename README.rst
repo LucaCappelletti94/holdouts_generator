@@ -116,15 +116,20 @@ Just run the method `clear_cache`:
         cache_dir=".holdouts" # This is the default cache directory
     )
 
-Clearing the holdouts memory cache
+Clearing the invalid holdouts
 --------------------------------------
-Just run the method `clear_memory_cache`:
+Sometimes it can happen that by moving around holdouts or
+simply by running parallel processes on clusters with machine with different specifics
+some holdouts can be created twice, overriding the original cache.
+
+In this unlikely scenario, the holdouts will be marked as **tempered**.
+Tp delete these holdouts use the following:
 
 .. code:: python
 
-    from holdouts_generator import clear_memory_cache
+    from holdouts_generator import clear_invalid_cache
 
-    clear_memory_cache(
+    clear_invalid_cache(
         cache_dir=".holdouts" # This is the default cache directory
     )
 

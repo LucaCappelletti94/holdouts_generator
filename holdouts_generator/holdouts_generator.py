@@ -1,5 +1,3 @@
-import os
-import shutil
 from tqdm.auto import tqdm
 from typing import List, Callable, Dict, Generator
 from .utils import get_level_description, cached, uncached, get_holdout_key
