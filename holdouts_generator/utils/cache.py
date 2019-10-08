@@ -3,6 +3,7 @@ from .paths import holdout_pickle_path, holdout_cache_path
 from .various import odd_even_split
 from .hash import hash_file
 from .json import load, dump
+import pandas as pd
 from glob import glob
 import shutil
 import zlib
@@ -88,6 +89,21 @@ def clear_invalid_cache(cache_dir: str = ".holdouts"):
             if os.path.exists(cache["path"]):
                 os.remove(cache["path"])
             os.remove(cache_path)
+
+
+def clear_invalid_results(results_directory: str = "results", cache_dir: str = ".holdouts"):
+    """Remove the results that do not map to a valid holdout cache.
+        results_directory: str = "results", directory where results are stores.
+        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+    """
+    clear_invalid_cache(cache_dir)
+    cache = pd.DataFrame([
+        load(cache_path) for cache_path in glob("{cache_dir}/cache/*.json".format(cache_dir=cache_dir))
+    ])
+    for result_path in glob("{results_directory}/results/*.json".format(results_directory=results_directory)):
+        key = load(result_path)["holdouts_key"]
+        if "key" in cache and key not in cache.key:
+            os.remove(result_path)
 
 
 def clear_cache(cache_dir: str = ".holdouts"):

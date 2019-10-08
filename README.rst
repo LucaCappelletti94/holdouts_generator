@@ -133,6 +133,21 @@ Tp delete these holdouts use the following:
         cache_dir=".holdouts" # This is the default cache directory
     )
 
+
+Clearing the invalid results
+--------------------------------------
+As you can get invalid holdouts, it is also possible to get invalid results that map
+to invalid holduts. For this reason there is a method to delete these results:
+
+.. code:: python
+
+    from holdouts_generator import clear_invalid_results
+
+    clear_invalid_results(
+        results_directory: str = "results", # This is the default results directory
+        cache_dir=".holdouts" # This is the default cache directory
+    )
+
 .. |travis| image:: https://travis-ci.org/LucaCappelletti94/holdouts_generator.png
    :target: https://travis-ci.org/LucaCappelletti94/holdouts_generator
    :alt: Travis CI build
