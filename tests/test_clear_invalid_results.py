@@ -8,18 +8,17 @@ import pytest
 def test_clear_invalid_results():
     clear_all_cache()
     np.random.seed(10)
-    generator = cached_holdouts_generator(np.random.randint(100, size=(100,100)), holdouts=random_holdouts([0.1], [2]))
+    generator = cached_holdouts_generator(np.random.randint(100, size=(100,100)), holdouts=random_holdouts([0.1], [1]))
     gen = generator()
     (_, _), key, _ = next(gen)
     store_result(key, {"ping":"pong"}, 0)
     clear_invalid_results()
-    _ = next(gen)
     path = glob(".holdouts/holdouts/*.pickle.gz")[0]
     os.remove(path)
     with pytest.raises(ValueError):
-        gen = generator()
-        next(gen)
-        next(gen)
+        list(generator())
+    with pytest.raises(ValueError):
+        store_result(key, {"ping":"pong"}, 0)
     clear_invalid_results()
     clear_all_cache()
     

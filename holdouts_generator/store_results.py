@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from .utils import results_path, hyper_parameters_path, parameters_path, history_path, trained_model_path, true_labels_path, predictions_labels_path
 from .utils import dump, load
+from .utils import can_save_result_to_holdout_key
 from .work_in_progress import remove_work_in_progress, is_work_in_progress
 from keras import Model
 from glob import glob
@@ -11,13 +12,14 @@ import shutil
 import humanize
 
 
-def store_result(key: str, new_results: Dict, time: int, hyper_parameters: Dict = None, parameters: Dict = None, results_directory: str = "results"):
+def store_result(key: str, new_results: Dict, time: int, hyper_parameters: Dict = None, parameters: Dict = None, results_directory: str = "results", cache_dir:str=".holdouts"):
     """Store given results in a standard way, so that the skip function can use them.
         key: str, key identifier of holdout to be skipped.
         new_results: Dict, results to store.
         hyper_parameters: Dict, hyper parameters to check for.
         parameters: Dict, parameters used for tuning the model.
         results_directory: str = "results", directory where to store the results.
+        cache_dir:str=".holdouts", the holdouts cache directory.
     """
     path = results_path(
         results_directory,
@@ -29,6 +31,11 @@ def store_result(key: str, new_results: Dict, time: int, hyper_parameters: Dict 
             key=key,
             hyper_parameters=hyper_parameters,
             results_directory=results_directory
+        ))
+    if not can_save_result_to_holdout_key(key, cache_dir):
+        raise ValueError("Given key {key} does not map to a valid holdout in given cache directory {cache_dir}!".format(
+            key=key,
+            cache_dir=cache_dir
         ))
     hppath = None if hyper_parameters is None else hyper_parameters_path(
         results_directory, hyper_parameters)

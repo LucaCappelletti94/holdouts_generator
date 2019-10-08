@@ -48,6 +48,15 @@ def is_valid_holdout_key(path: str, key: str) -> bool:
         return False
 
 
+def can_save_result_to_holdout_key(key: str, cache_dir:str=".holdouts") -> bool:
+    """Return bool representing if given key is correct sign for any given holdout.
+        key:str, the holdout's key.
+        cache_dir:str=".holdouts", the holdouts cache directory.
+    """
+    cache = load_valid_cache(cache_dir)
+    return not cache.empty and cache.key.isin([key]).any()
+
+
 def get_holdout_key(cache_dir: str, **holdout_parameters: Dict) -> str:
     """Return key, if cached, for given holdout else return None.
         cache_dir:str, cache directory to load data from
@@ -91,18 +100,25 @@ def clear_invalid_cache(cache_dir: str = ".holdouts"):
             os.remove(cache_path)
 
 
+def load_valid_cache(cache_dir: str = ".holdouts") -> pd.DataFrame:
+    """Remove the holdouts that do not map to a valid cache and return valid cache dataframe.
+        cache_dir:str=".holdouts", the holdouts cache directory to be removed.
+    """
+    clear_invalid_cache(cache_dir)
+    return pd.DataFrame([
+        load(cache_path) for cache_path in glob("{cache_dir}/cache/*.json".format(cache_dir=cache_dir))
+    ])
+
+
 def clear_invalid_results(results_directory: str = "results", cache_dir: str = ".holdouts"):
     """Remove the results that do not map to a valid holdout cache.
         results_directory: str = "results", directory where results are stores.
         cache_dir:str=".holdouts", the holdouts cache directory to be removed.
     """
-    clear_invalid_cache(cache_dir)
-    cache = pd.DataFrame([
-        load(cache_path) for cache_path in glob("{cache_dir}/cache/*.json".format(cache_dir=cache_dir))
-    ])
+    cache = load_valid_cache(cache_dir)
     for result_path in glob("{results_directory}/results/*.json".format(results_directory=results_directory)):
         key = load(result_path)["holdouts_key"]
-        if "key" in cache and key not in cache.key:
+        if not cache.empty and cache.key.isin([key]).any():
             os.remove(result_path)
 
 
