@@ -123,7 +123,7 @@ simply by running parallel processes on clusters with machine with different spe
 some holdouts can be created twice, overriding the original cache.
 
 In this unlikely scenario, the holdouts will be marked as **tempered**.
-Tp delete these holdouts use the following:
+To delete these holdouts use the following:
 
 .. code:: python
 

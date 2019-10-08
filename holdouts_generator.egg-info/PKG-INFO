@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: holdouts-generator
-Version: 0.0.38
+Version: 0.0.39
 Summary: Simple python package to generate and cache both random and chromosomal holdouts with arbitrary depth.
 Home-page: https://github.com/LucaCappelletti94/holdouts_generator
 Author: Luca Cappelletti
@@ -124,15 +124,35 @@ Description: holdouts_generator
                 cache_dir=".holdouts" # This is the default cache directory
             )
         
-        Clearing the holdouts memory cache
+        Clearing the invalid holdouts
         --------------------------------------
-        Just run the method `clear_memory_cache`:
+        Sometimes it can happen that by moving around holdouts or
+        simply by running parallel processes on clusters with machine with different specifics
+        some holdouts can be created twice, overriding the original cache.
+        
+        In this unlikely scenario, the holdouts will be marked as **tempered**.
+        To delete these holdouts use the following:
         
         .. code:: python
         
-            from holdouts_generator import clear_memory_cache
+            from holdouts_generator import clear_invalid_cache
         
-            clear_memory_cache(
+            clear_invalid_cache(
+                cache_dir=".holdouts" # This is the default cache directory
+            )
+        
+        
+        Clearing the invalid results
+        --------------------------------------
+        As you can get invalid holdouts, it is also possible to get invalid results that map
+        to invalid holduts. For this reason there is a method to delete these results:
+        
+        .. code:: python
+        
+            from holdouts_generator import clear_invalid_results
+        
+            clear_invalid_results(
+                results_directory: str = "results", # This is the default results directory
                 cache_dir=".holdouts" # This is the default cache directory
             )
         
