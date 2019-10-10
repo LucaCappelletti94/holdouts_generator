@@ -1,4 +1,4 @@
-from holdouts_generator import holdouts_generator, cached_holdouts_generator
+from holdouts_generator import cached_holdouts_generator
 import pandas as pd
 import numpy as np
 from glob import glob

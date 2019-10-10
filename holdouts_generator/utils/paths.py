@@ -1,7 +1,6 @@
 from dict_hash import sha256
 from typing import Dict, Callable
 import os
-import numpy as np
 
 
 def mkdir(path_function: Callable) -> Callable:
