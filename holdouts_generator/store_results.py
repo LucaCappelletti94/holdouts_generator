@@ -52,7 +52,7 @@ def store_result(
         results_directory, holdout_key, hyper_parameters)
     dump({
         **new_results,
-        "holdouts_holdout_key": holdout_key,
+        "holdout_key": holdout_key,
         "hyper_parameters_path": hppath,
         "parameters_path": ppath,
         "required_time": time,
