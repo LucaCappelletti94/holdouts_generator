@@ -1,8 +1,11 @@
 from typing import Callable, List, Tuple, Dict
 import itertools
 from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
 import numpy as np
-
+from .utils import odd_even_split
+from sklearn.utils import shuffle
+        
 
 def balanced_random_holdout(test_size: float, random_state: int, hyper_parameters:Dict)->[Callable, str, Tuple[float, int]]:
     """Return a function to create an holdout with given test_size and random_state and the path where to store it.
@@ -21,9 +24,13 @@ def balanced_random_holdout(test_size: float, random_state: int, hyper_parameter
             for label in np.unique(dataset[-1])
         ]).T:
             array = np.array(list(itertools.chain.from_iterable(row)))
-            rnd.shuffle(array)
             results.append(array)
-        return results
+        train, test = odd_even_split(results)
+        train = shuffle(*train, random_state=random_state)
+        test = shuffle(*test, random_state=random_state)
+        return sum(
+            ((e1, e2) for e1, e2 in zip(train, test)), tuple()
+        )
 
     return holdout, {
         "test_size": test_size,

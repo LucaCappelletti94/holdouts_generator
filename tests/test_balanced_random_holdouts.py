@@ -1,4 +1,4 @@
-from holdouts_generator import holdouts_generator, cached_holdouts_generator
+from holdouts_generator import holdouts_generator, cached_holdouts_generator, balanced_random_holdouts
 import numpy as np
 from .utils import example_balanced_random_holdouts, clear_all_cache
 
@@ -35,3 +35,18 @@ def test_balanced_random_holdouts_generator():
     run_this_twice()
     run_this_twice()
     clear_all_cache(results_directory="results", cache_dir="holdouts")
+
+
+def test_balanced_random_holdouts_generator_alignment():
+    y = np.hstack([
+        np.ones(100),
+        np.zeros(100)
+    ])
+    x = np.arange(200)
+    ((train_x, train_y), (test_x, test_y)), _ = next(
+        holdouts_generator(
+            x, y,
+            holdouts=balanced_random_holdouts([0.3], [1])
+    )())
+    assert (y[train_x] == train_y).all()
+    assert (y[test_x] == test_y).all()
