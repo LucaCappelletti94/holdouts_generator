@@ -1,4 +1,4 @@
-from holdouts_generator import holdouts_generator, cached_holdouts_generator, balanced_random_holdouts
+from holdouts_generator import holdouts_generator, cached_holdouts_generator, balanced_random_holdouts, are_holdouts_complete, skip
 import numpy as np
 from .utils import example_balanced_random_holdouts, clear_all_cache
 
@@ -34,8 +34,20 @@ def run_this_twice():
 
 def test_balanced_random_holdouts_generator():
     clear_all_cache(results_directory="results", cache_dir="holdouts")
+    assert not are_holdouts_complete(
+        holdouts=example_balanced_random_holdouts,
+        cache_dir="holdouts",
+        results_directory="results",
+        skip=skip
+    )
     run_this_twice()
     run_this_twice()
+    assert are_holdouts_complete(
+        holdouts=example_balanced_random_holdouts,
+        cache_dir="holdouts",
+        results_directory="results",
+        skip=skip
+    )
     clear_all_cache(results_directory="results", cache_dir="holdouts")
 
 

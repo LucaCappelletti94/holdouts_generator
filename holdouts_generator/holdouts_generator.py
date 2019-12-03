@@ -10,18 +10,17 @@ def empty_generator(*args, **kwargs):
 
 def are_holdouts_complete(
     holdouts: List,
-    cacher: Callable,
     cache_dir: str,
     results_directory: str,
+    skip: Callable[[str, Dict, str], bool],
     hyper_parameters: Dict = None,
-    skip: Callable[[str, Dict, str], bool] = None,
     level: int = 0,
     verbose: bool = True
 ):
     for number, (_, parameters, _) in enumerate(tqdm(holdouts, disable=not verbose, desc=get_level_description(level))):
         key = get_holdout_key(cache_dir, **parameters,
                               level=level, number=number)
-        if not (cache_dir is not None and skip is not None and key is not None and skip(key, hyper_parameters, results_directory)):
+        if key is None or skip(key, hyper_parameters, results_directory):
             return False
     return True
 
