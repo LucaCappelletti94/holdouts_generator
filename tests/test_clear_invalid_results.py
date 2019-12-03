@@ -9,7 +9,9 @@ def test_clear_invalid_results():
     clear_all_cache()
     np.random.seed(10)
     generator = cached_holdouts_generator(np.random.randint(100, size=(100,100)), holdouts=random_holdouts([0.1], [1]), cache_dir="holdouts")
-    gen = generator()
+    with pytest.raises(ValueError):
+        list(generator())
+    gen = generator(results_directory="results")
     (_, _), key, _ = next(gen)
     store_result(key, {"ping":"pong"}, 0, results_directory="results", cache_dir="holdouts", hyper_parameters={"keb":"ab"})
     assert len(glob("results/results/*.json")) == 1
@@ -18,7 +20,7 @@ def test_clear_invalid_results():
     path = glob("holdouts/holdouts/*.pickle.gz")[0]
     os.remove(path)
     with pytest.raises(ValueError):
-        list(generator())
+        list(generator(results_directory="results"))
     clear_invalid_results(results_directory="results", cache_dir="holdouts")
     with pytest.raises(ValueError):
         store_result(key, {"ping":"pong"}, 0, results_directory="results", cache_dir="holdouts")

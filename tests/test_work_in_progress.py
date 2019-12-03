@@ -8,7 +8,7 @@ def test_work_in_progress():
     clear_all_cache(results_directory="results", cache_dir="holdouts")
     generator = cached_holdouts_generator(np.random.randint(
         100, size=(100, 100)), holdouts=random_holdouts([0.1], [3]), cache_dir="holdouts")
-    for _, key, _ in generator():
+    for _, key, _ in generator(results_directory="results"):
         with pytest.raises(ValueError):
             remove_work_in_progress("results", key)
         add_work_in_progress("results", key)

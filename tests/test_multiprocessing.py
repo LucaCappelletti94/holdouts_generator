@@ -24,8 +24,8 @@ def test_multiprocessing():
     )
 
     with Pool(cpu_count()) as p:
-        p.map(job_wrapper, generator())
-        p.map(job_wrapper, generator())
+        p.map(job_wrapper, generator(results_directory="results"))
+        p.map(job_wrapper, generator(results_directory="results"))
         p.close()
         p.join()
     regroup_results(results_directory="results")

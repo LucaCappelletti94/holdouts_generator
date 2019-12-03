@@ -34,6 +34,8 @@ def train(training: Tuple, testing: Tuple, hyper_parameters: Dict):
     ).history
     return {
         "history": history,
+        "x_train": training[0],
+        "y_train_true": training[1],
         "x_test": testing[0],
         "y_test_true": testing[1],
         "model": model,
@@ -59,17 +61,17 @@ def test_keras_cache():
         for _ in inner(hyper_parameters):
             pass
 
-    for (training, testing), outer_key, inner in generator(hyper_parameters):
+    for (training, testing), outer_key, inner in generator(results_directory="results", hyper_parameters=hyper_parameters):
         with pytest.raises(ValueError):
             load_result("results", outer_key, hyper_parameters)
         add_work_in_progress("results", outer_key, hyper_parameters)
-        for (inner_training, inner_testing), inner_key, _ in inner(hyper_parameters):
+        for (inner_training, inner_testing), inner_key, _ in inner(results_directory="results", hyper_parameters=hyper_parameters):
             store_keras_result(inner_key, **train(inner_training, inner_testing, hyper_parameters))
             with pytest.raises(ValueError):
                 store_keras_result(inner_key, **train(inner_training, inner_testing, hyper_parameters))
         store_keras_result(outer_key, **train(training, testing, hyper_parameters))
 
-    for (training, testing), outer_key, inner in generator(hyper_parameters):
+    for (training, testing), outer_key, inner in generator(results_directory="results", hyper_parameters=hyper_parameters):
         assert training is None
         assert testing is None
         assert not inner()

@@ -142,14 +142,16 @@ def work_in_progress_path(results_directory: str, holdout_key: str, hyper_parame
 
 
 @mkdir
-def predictions_labels_path(results_directory: str, holdout_key: str, hyper_parameters: str) -> str:
+def predictions_labels_path(results_directory: str, holdout_key: str, labels_type:str, hyper_parameters: str) -> str:
     """Return default path for prediction labels.
         results_directory: str, directory where to store the prediction_labels.
         holdout_key:str, key that identifies the holdout used for training.
+        labels_type:str, the labels_type of the data. Can either be "train", "test".
         hyper_parameters: Dict, hyperparameters used to train the model.
     """
-    return "{results_directory}/predictions_labels/{key}.csv".format(
+    return "{results_directory}/predictions_labels/{labels_type}/{key}.csv".format(
         results_directory=results_directory,
+        labels_type=labels_type,
         key=sha256({
             "holdout_key": holdout_key,
             "hyper_parameters": hyper_parameters
@@ -158,14 +160,16 @@ def predictions_labels_path(results_directory: str, holdout_key: str, hyper_para
 
 
 @mkdir
-def true_labels_path(results_directory: str, holdout_key: str, hyper_parameters: str) -> str:
+def true_labels_path(results_directory: str, holdout_key: str, labels_type:str, hyper_parameters: str) -> str:
     """Return default path for true labels.
         results_directory: str, directory where to store the true_labels.
         holdout_key:str, key that identifies the holdout used for training.
+        labels_type:str, the labels_type of the data. Can either be "train", "test".
         hyper_parameters: Dict, hyperparameters used to train the model.
     """
-    return "{results_directory}/true_labels/{key}.csv".format(
+    return "{results_directory}/true_labels/{labels_type}/{key}.csv".format(
         results_directory=results_directory,
+        labels_type=labels_type,
         key=sha256({
             "holdout_key": holdout_key,
             "hyper_parameters": hyper_parameters
