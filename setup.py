@@ -54,6 +54,16 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     tests_require=test_deps,
     # Add here the package dependencies
-    install_requires=["tqdm", "sklearn", "pandas", "dict_hash", "keras", "compress_pickle", "humanize", "touch"],
+    install_requires=[
+        "tqdm",
+        "sklearn",
+        "pandas",
+        "dict_hash",
+        "keras",
+        "compress_pickle",
+        "humanize",
+        "touch",
+        "deflate_dict"
+    ],
     extras_require=extras,
 )
