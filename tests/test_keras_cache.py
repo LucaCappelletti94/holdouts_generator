@@ -1,6 +1,6 @@
 from holdouts_generator import cached_holdouts_generator, skip, store_keras_result, load_result, add_work_in_progress
 from typing import Tuple, Dict
-from keras.datasets import boston_housing
+from sklearn.datasets import load_iris
 from .utils import example_random_holdouts, clear_all_cache
 from keras import Sequential
 from keras.layers import Dense
@@ -9,8 +9,8 @@ import pytest
 
 def mlp()->Sequential:
     model = Sequential([
-        *[Dense(units=10) for kwargs in range(2)],
-        Dense(1, activation="relu"),
+        *[Dense(units=10) for kwargs in range(3)],
+        Dense(1, activation="sigmoid"),
     ])
     model.compile(
         optimizer="nadam",
@@ -50,11 +50,13 @@ def train(training: Tuple, testing: Tuple, hyper_parameters: Dict):
 def test_keras_cache():
     clear_all_cache(results_directory="results", cache_dir="holdouts")
 
-    (x_train, y_train), _ = boston_housing.load_data()
+    X, y = load_iris(return_X_y=True)
+    X = X[y!=2]
+    y = y[y!=2]
     generator = cached_holdouts_generator(
-        x_train, y_train, holdouts=example_random_holdouts, cache_dir="holdouts", skip=skip)
+        X, y, holdouts=example_random_holdouts, cache_dir="holdouts", skip=skip)
     hyper_parameters = {
-        "epochs": 1
+        "epochs": 10
     }
 
     for _, _, inner in generator(hyper_parameters):

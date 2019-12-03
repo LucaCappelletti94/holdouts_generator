@@ -11,8 +11,6 @@ from sklearn.metrics import hinge_loss
 from sklearn.metrics import jaccard_score
 from sklearn.metrics import log_loss
 from sklearn.metrics import matthews_corrcoef
-from sklearn.metrics import precision_recall_curve
-from sklearn.metrics import precision_recall_fscore_support
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import zero_one_loss
@@ -25,7 +23,6 @@ metrics_groups = {
         average_precision_score,
         hinge_loss,
         log_loss,
-        precision_recall_curve,
         brier_score_loss,
         roc_auc_score
     ],
@@ -37,7 +34,6 @@ metrics_groups = {
         hamming_loss,
         jaccard_score,
         matthews_corrcoef,
-        precision_recall_fscore_support,
         precision_score,
         recall_score,
         zero_one_loss
@@ -74,17 +70,16 @@ def binary_classifications_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> Di
     -------
     Return dictionary of classifications.
     """
-    confusion_matrix(y_true, y_pred).flatten()
     true_negatives, false_positives, false_negatives, true_positives = [
         int(e) for e in confusion_matrix(y_true, np.array(y_pred).round()).ravel()
     ]
     return {
         **{
-            metric(y_true, y_pred)
+            metric.__name__: float(metric(y_true, y_pred))
             for metric in metrics_groups["continous"]
         },
         **{
-            metric(y_true, np.array(y_pred).round())
+            metric.__name__: float(metric(y_true, np.array(y_pred).round()))
             for metric in metrics_groups["integer"]
         },
         "fall_out": false_positives / (false_negatives + true_positives),
