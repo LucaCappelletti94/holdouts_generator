@@ -93,11 +93,10 @@ def load_result(results_directory: str, holdout_key: str, hyper_parameters: Dict
 
 def store_model_result(
     holdout_key: str,
-    x_train: np.ndarray,
     y_train_true: np.ndarray,
-    x_test: np.ndarray,
+    y_train_pred: np.ndarray,
     y_test_true: np.ndarray,
-    model: BaseEstimator,
+    y_test_pred: np.ndarray,
     time: int,
     results_directory: str,
     cache_dir:str,
@@ -107,11 +106,10 @@ def store_model_result(
 ):
     """Store given model results in a standard way, so that the skip function can use them.
         holdout_key: str, holdout_key identifier of holdout to be skipped.
-        x_train:np.ndarray, input train values for the model.
         y_train_true:np.ndarray, true output train values.
-        x_test:np.ndarray, input test values for the model.
+        y_train_pred:np.ndarray, predicted output train values.
         y_test_true:np.ndarray, true output test values.
-        model:BaseEstimator, model used to predict the value.
+        y_test_pred:np.ndarray, predicted output test values.
         time: int, time required for given result.
         results_directory: str, directory where to store the results.
         cache_dir:str, the holdouts cache directory.
@@ -121,8 +119,6 @@ def store_model_result(
         hyper_parameters: Dict, hyper parameters to check for.
         parameters: Dict, parameters used for tuning the model.
     """
-    y_train_pred = model.predict(x_train)
-    y_test_pred = model.predict(x_test)
     plpath_train = predictions_labels_path(results_directory, holdout_key, "train", hyper_parameters)
     plpath_test = predictions_labels_path(results_directory, holdout_key, "test", hyper_parameters)
     tlpath_train = true_labels_path(results_directory, holdout_key, "train", hyper_parameters)
@@ -163,7 +159,7 @@ def store_model_result(
 
 
 def store_keras_result(
-    holdout_key: str,
+     holdout_key: str,
     history: Dict,
     x_train: np.ndarray,
     y_train_true: np.ndarray,
@@ -202,11 +198,10 @@ def store_keras_result(
     dfh = pd.DataFrame(history)
     store_model_result(
         holdout_key=holdout_key,
-        x_train=x_train,
         y_train_true=y_train_true,
-        x_test=x_test,
+        y_train_pred=model.predict(x_train),
         y_test_true=y_test_true,
-        model=model,
+        y_test_pred=model.predict(x_test),
         time=time,
         results_directory=results_directory,
         cache_dir=cache_dir,
