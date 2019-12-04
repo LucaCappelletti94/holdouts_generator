@@ -21,22 +21,14 @@ from deflate_dict import deflate
 metrics_groups = {
     "continous": [
         average_precision_score,
-        hinge_loss,
-        log_loss,
-        brier_score_loss,
         roc_auc_score
     ],
     "integer": [
         accuracy_score,
         balanced_accuracy_score,
-        cohen_kappa_score,
         f1_score,
-        hamming_loss,
-        jaccard_score,
-        matthews_corrcoef,
         precision_score,
-        recall_score,
-        zero_one_loss
+        recall_score
     ]
 }
 
