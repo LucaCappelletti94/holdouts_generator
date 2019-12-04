@@ -6,6 +6,7 @@ keras
 compress_pickle
 humanize
 touch
+deflate_dict
 
 [test]
 codacy-coverage

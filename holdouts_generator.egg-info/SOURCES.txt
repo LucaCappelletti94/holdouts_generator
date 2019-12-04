@@ -19,5 +19,6 @@ holdouts_generator/utils/cache.py
 holdouts_generator/utils/hash.py
 holdouts_generator/utils/holdouts_description.py
 holdouts_generator/utils/json.py
+holdouts_generator/utils/metrics.py
 holdouts_generator/utils/paths.py
 holdouts_generator/utils/various.py
