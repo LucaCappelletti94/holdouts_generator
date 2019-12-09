@@ -39,8 +39,11 @@ def _holdouts_generator(*dataset: List, holdouts: List, cacher: Callable, cache_
         return None
 
     def generator(results_directory: str = None, hyper_parameters: Dict = None):
-        if cache_dir is not None and results_directory is None:
-            raise ValueError("Parameter results_directory cannot be None when using cache!")
+        if cache_dir is not None:
+            if results_directory is None:
+                raise ValueError("Parameter results_directory cannot be None when using cache!")
+            if not isinstance(results_directory, str):
+                raise ValueError("Given parameter `results_directory` is not a string!")
         for number, (outer, parameters, inner) in enumerate(tqdm(holdouts, disable=not verbose, desc=get_level_description(level))):
             if cache_dir:
                 key = get_holdout_key(cache_dir, **parameters,

@@ -59,8 +59,8 @@ def test_keras_cache():
         "epochs": 10
     }
 
-    for _, _, inner in generator(hyper_parameters):
-        for _ in inner(hyper_parameters):
+    for _, _, inner in generator(results_directory="results", hyper_parameters=hyper_parameters):
+        for _ in inner(results_directory="results", hyper_parameters=hyper_parameters):
             pass
 
     for (training, testing), outer_key, inner in generator(results_directory="results", hyper_parameters=hyper_parameters):

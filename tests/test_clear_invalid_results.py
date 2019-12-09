@@ -11,6 +11,8 @@ def test_clear_invalid_results():
     generator = cached_holdouts_generator(np.random.randint(100, size=(100,100)), holdouts=random_holdouts([0.1], [1]), cache_dir="holdouts")
     with pytest.raises(ValueError):
         list(generator())
+    with pytest.raises(ValueError):
+        list(generator(results_directory={"test":4}))
     gen = generator(results_directory="results")
     (_, _), key, _ = next(gen)
     store_result(key, {"ping":"pong"}, 0, results_directory="results", cache_dir="holdouts", hyper_parameters={"keb":"ab"})
