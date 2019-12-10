@@ -2,8 +2,8 @@ from holdouts_generator import cached_holdouts_generator, skip, store_keras_resu
 from typing import Tuple, Dict
 from sklearn.datasets import load_iris
 from .utils import example_random_holdouts, clear_all_cache
-from keras import Sequential
-from keras.layers import Dense
+from tensorlow.keras import Sequential
+from tensorlow.keras.layers import Dense
 import time
 import pytest
 

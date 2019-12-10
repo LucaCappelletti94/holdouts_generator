@@ -59,7 +59,6 @@ setup(
         "sklearn",
         "pandas",
         "dict_hash",
-        "keras",
         "compress_pickle",
         "humanize",
         "touch",
