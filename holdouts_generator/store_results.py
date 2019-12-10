@@ -7,7 +7,7 @@ from .utils import dump, load, is_binary_classification_problem
 from .utils import can_save_result_to_holdout_key, train_test_binary_classifications_metrics
 from .work_in_progress import remove_work_in_progress, is_work_in_progress
 from sklearn.base import BaseEstimator
-from tensorlow.keras import Model
+from tensorflow.keras import Model
 from glob import glob
 import shutil
 import humanize
