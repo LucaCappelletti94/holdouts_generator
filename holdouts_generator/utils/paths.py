@@ -142,7 +142,7 @@ def work_in_progress_path(results_directory: str, holdout_key: str, hyper_parame
 
 
 @mkdir
-def predictions_labels_path(results_directory: str, holdout_key: str, labels_type:str, hyper_parameters: str) -> str:
+def predictions_labels_path(results_directory: str, holdout_key: str, labels_type: str, hyper_parameters: str) -> str:
     """Return default path for prediction labels.
         results_directory: str, directory where to store the prediction_labels.
         holdout_key:str, key that identifies the holdout used for training.
@@ -160,7 +160,7 @@ def predictions_labels_path(results_directory: str, holdout_key: str, labels_typ
 
 
 @mkdir
-def true_labels_path(results_directory: str, holdout_key: str, labels_type:str, hyper_parameters: str) -> str:
+def true_labels_path(results_directory: str, holdout_key: str, labels_type: str, hyper_parameters: str) -> str:
     """Return default path for true labels.
         results_directory: str, directory where to store the true_labels.
         holdout_key:str, key that identifies the holdout used for training.

@@ -12,8 +12,10 @@ python:
 - '3.6'
 before_install:
 - pip install pip --upgrade
+- pip uninstall -y numpy
+- pip install numpy --upgrade
 - pip install --upgrade pytest
-- pip install --upgrade tensorflow
+- pip install tensorflow==2.0
 install:
 - pip install .[test]
 before_script:
