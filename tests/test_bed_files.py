@@ -1,4 +1,4 @@
-from holdouts_generator import holdouts_generator, balanced_random_holdouts
+from holdouts_generator import holdouts_generator, balanced_random_holdouts, random_holdouts
 import pandas as pd
 import numpy as np
 
@@ -12,11 +12,12 @@ def test_bed_files():
 
     classes = np.random.randint(2, size=(len(bed), 1))
 
-    generator = holdouts_generator(bed, classes, holdouts=balanced_random_holdouts(
-        test_sizes=[0.3],
-        quantities=[1],
-        random_state=42
-    ))
-    for (training, testing), _ in generator():
-        assert isinstance(training[0], pd.DataFrame)
-        assert isinstance(testing[0], pd.DataFrame)
+    for holdouts_type in (random_holdouts, balanced_random_holdouts):
+        generator = holdouts_generator(bed, classes, holdouts=holdouts_type(
+            test_sizes=[0.3],
+            quantities=[1],
+            random_state=42
+        ))
+        for (training, testing), _ in generator():
+            assert isinstance(training[0], pd.DataFrame)
+            assert isinstance(testing[0], pd.DataFrame)
