@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import Dict
 import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import balanced_accuracy_score

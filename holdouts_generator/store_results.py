@@ -6,7 +6,6 @@ from .utils import results_path, hyper_parameters_path, parameters_path, history
 from .utils import dump, load, is_binary_classification_problem
 from .utils import can_save_result_to_holdout_key, train_test_binary_classifications_metrics
 from .work_in_progress import remove_work_in_progress, is_work_in_progress
-from sklearn.base import BaseEstimator
 from tensorflow.keras import Model
 from glob import glob
 import shutil
@@ -18,7 +17,7 @@ def store_result(
     new_results: Dict,
     time: int,
     results_directory: str,
-    cache_dir:str,
+    cache_dir: str,
     hyper_parameters: Dict = None,
     parameters: Dict = None
 ):
@@ -99,7 +98,7 @@ def store_model_result(
     y_test_pred: np.ndarray,
     time: int,
     results_directory: str,
-    cache_dir:str,
+    cache_dir: str,
     informations: Dict = None,
     hyper_parameters: Dict = None,
     parameters: Dict = None
@@ -119,10 +118,14 @@ def store_model_result(
         hyper_parameters: Dict, hyper parameters to check for.
         parameters: Dict, parameters used for tuning the model.
     """
-    plpath_train = predictions_labels_path(results_directory, holdout_key, "train", hyper_parameters)
-    plpath_test = predictions_labels_path(results_directory, holdout_key, "test", hyper_parameters)
-    tlpath_train = true_labels_path(results_directory, holdout_key, "train", hyper_parameters)
-    tlpath_test = true_labels_path(results_directory, holdout_key, "test", hyper_parameters)
+    plpath_train = predictions_labels_path(
+        results_directory, holdout_key, "train", hyper_parameters)
+    plpath_test = predictions_labels_path(
+        results_directory, holdout_key, "test", hyper_parameters)
+    tlpath_train = true_labels_path(
+        results_directory, holdout_key, "train", hyper_parameters)
+    tlpath_test = true_labels_path(
+        results_directory, holdout_key, "test", hyper_parameters)
 
     informations = {} if informations is None else informations
     store_result(
@@ -133,11 +136,11 @@ def store_model_result(
             "train_true_labels_path": tlpath_train,
             "test_true_labels_path": tlpath_test,
             **(train_test_binary_classifications_metrics(
-                    y_train_true,
-                    y_train_pred,
-                    y_test_true,
-                    y_test_pred
-                ) if is_binary_classification_problem(y_train_true) and is_binary_classification_problem(y_test_true)
+                y_train_true,
+                y_train_pred,
+                y_test_true,
+                y_test_pred
+            ) if is_binary_classification_problem(y_train_true) and is_binary_classification_problem(y_test_true)
                 else {}
             ),
             **informations
@@ -159,7 +162,7 @@ def store_model_result(
 
 
 def store_keras_result(
-     holdout_key: str,
+    holdout_key: str,
     history: Dict,
     x_train: np.ndarray,
     y_train_true: np.ndarray,
@@ -168,7 +171,7 @@ def store_keras_result(
     model: Model,
     time: int,
     results_directory: str,
-    cache_dir:str,
+    cache_dir: str,
     informations: Dict = None,
     hyper_parameters: Dict = None,
     parameters: Dict = None,
@@ -193,7 +196,8 @@ def store_keras_result(
         save_model:bool=True, whetever to save or not the model.
     """
     hpath = history_path(results_directory, holdout_key, hyper_parameters)
-    mpath = trained_model_path(results_directory, holdout_key, hyper_parameters)
+    mpath = trained_model_path(
+        results_directory, holdout_key, hyper_parameters)
 
     dfh = pd.DataFrame(history)
     store_model_result(
@@ -233,6 +237,7 @@ def regroup_results(results_directory: str) -> pd.DataFrame:
     """
     return pd.DataFrame([
         load(path) for path in glob(
-            "{results_directory}/results/*.json".format(results_directory=results_directory)
+            "{results_directory}/results/*.json".format(
+                results_directory=results_directory)
         ) if path.endswith(".json")
     ])

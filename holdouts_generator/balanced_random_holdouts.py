@@ -1,5 +1,4 @@
 from typing import Callable, List, Tuple, Dict
-import itertools
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 import numpy as np
