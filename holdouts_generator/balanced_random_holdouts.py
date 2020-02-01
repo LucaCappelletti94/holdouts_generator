@@ -3,6 +3,7 @@ import itertools
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 import numpy as np
+import pandas as pd
 from .utils import odd_even_split
 
 
@@ -17,14 +18,25 @@ def balanced_random_holdout(test_size: float, random_state: int, hyper_parameter
             dataset, the dataset to split. It must finish with an array containing the classes.
         """
         results = []
-        rnd = np.random.RandomState(seed=random_state)
         for row in np.array([
-            train_test_split(*[d[dataset[-1] == label] for d in dataset],
-                             test_size=test_size, random_state=random_state)
+            train_test_split(
+                *[
+                    d[dataset[-1] == label]
+                    for d in dataset
+                ],
+                test_size=test_size,
+                random_state=random_state
+            )
             for label in np.unique(dataset[-1])
         ]).T:
-            array = np.array(list(itertools.chain.from_iterable(row)))
-            results.append(array)
+            if all([
+                isinstance(d, pd.DataFrame)
+                for d in row
+            ]):
+                results.append(pd.concat(row))
+            else:
+                results.append(np.concatenate(row))
+
         train, test = odd_even_split(results)
         train = shuffle(*train, random_state=random_state)
         test = shuffle(*test, random_state=random_state)

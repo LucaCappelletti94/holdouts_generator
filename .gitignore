@@ -12,3 +12,5 @@
 
 \.coverage*
 htmlcov
+.pytest_cache
+.ipynb_checkpoints
